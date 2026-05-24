@@ -1,0 +1,5 @@
+anthropic>=0.25
+chromadb>=0.4,<0.6
+sentence-transformers>=2.2
+click>=8.0
+lxml>=4.9

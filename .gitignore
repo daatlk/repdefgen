@@ -1,0 +1,9 @@
+.venv/
+.repdefgen/
+__pycache__/
+*.py[cod]
+*.egg-info/
+UNKNOWN.egg-info/
+dist/
+build/
+.DS_Store
