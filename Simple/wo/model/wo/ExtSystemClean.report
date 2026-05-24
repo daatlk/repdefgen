@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<REPORT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:ifsworld-com:schemas:report_report">
+   <CODE_GENERATION_PROPERTIES>
+      <CODE_GENERATION_PROPERTIES>
+         <TITLE_TEXT>Extraction System Cleaning</TITLE_TEXT>
+      </CODE_GENERATION_PROPERTIES>
+   </CODE_GENERATION_PROPERTIES>
+   <DIAGRAMS>
+      <DIAGRAM>
+         <NAME>Main</NAME>
+         <DIAGRAM_TYPE>REPORT_STRUCTURE</DIAGRAM_TYPE>
+         <NODES>
+            <DIAGRAM_NODE>
+               <ID>eeadbf60-0be0-11f1-1337-d9e1b9e515bf</ID>
+               <NODE_TYPE>REPORT</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>EntityName</NAME>
+                     <VALUE>ExtSystemClean</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>LUName</NAME>
+                     <VALUE>ExtSystemClean</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>46</X>
+                     <Y>50</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>159</X>
+                     <Y>76</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+            <DIAGRAM_NODE>
+               <ID>223e18e0-0be4-11f1-1337-d9e1b9e515bf</ID>
+               <NODE_TYPE>REPORT_BLOCK</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockName</NAME>
+                     <VALUE>ExtSystemCleanDetails</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>695</X>
+                     <Y>21</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>208</X>
+                     <Y>622</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+            <DIAGRAM_NODE>
+               <ID>f0a65b10-0be0-11f1-1337-d9e1b9e515bf</ID>
+               <NODE_TYPE>REPORT_BLOCK</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockName</NAME>
+                     <VALUE>ExtSystemCleanHeader</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>327</X>
+                     <Y>55</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>200</X>
+                     <Y>318</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+         </NODES>
+         <EDGES>
+            <DIAGRAM_EDGE>
+               <EDGE_TYPE>AGGREGATE</EDGE_TYPE>
+               <SOURCE_NODE_ID>eeadbf60-0be0-11f1-1337-d9e1b9e515bf</SOURCE_NODE_ID>
+               <TARGET_NODE_ID>f0a65b10-0be0-11f1-1337-d9e1b9e515bf</TARGET_NODE_ID>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockEdgeName</NAME>
+                     <VALUE>Headers1</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>IsArray</NAME>
+                     <VALUE>true</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>BlockName</NAME>
+                     <VALUE>ExtSystemCleanHeader</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <CONTROL_POINTS>
+                  <POINT>
+                     <X>204</X>
+                     <Y>120</Y>
+                  </POINT>
+                  <POINT>
+                     <X>326</X>
+                     <Y>171</Y>
+                  </POINT>
+               </CONTROL_POINTS>
+            </DIAGRAM_EDGE>
+            <DIAGRAM_EDGE>
+               <EDGE_TYPE>AGGREGATE</EDGE_TYPE>
+               <SOURCE_NODE_ID>f0a65b10-0be0-11f1-1337-d9e1b9e515bf</SOURCE_NODE_ID>
+               <TARGET_NODE_ID>223e18e0-0be4-11f1-1337-d9e1b9e515bf</TARGET_NODE_ID>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockEdgeName</NAME>
+                     <VALUE>ExtDetails</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>IsArray</NAME>
+                     <VALUE>true</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>BlockName</NAME>
+                     <VALUE>ExtSystemCleanDetails</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <CONTROL_POINTS>
+                  <POINT>
+                     <X>526</X>
+                     <Y>242</Y>
+                  </POINT>
+                  <POINT>
+                     <X>694</X>
+                     <Y>298</Y>
+                  </POINT>
+               </CONTROL_POINTS>
+               <LABEL_LOCATION>
+                  <POINT>
+                     <X>-8</X>
+                     <Y>-17</Y>
+                  </POINT>
+               </LABEL_LOCATION>
+            </DIAGRAM_EDGE>
+         </EDGES>
+      </DIAGRAM>
+   </DIAGRAMS>
+   <NAME>ExtSystemClean</NAME>
+   <COMPONENT>WO</COMPONENT>
+   <LU_NAME>ExtSysClean</LU_NAME>
+   <BLOCKS>
+      <BLOCK>
+         <NAME>ExtSystemCleanHeader</NAME>
+         <CURSOR_DEFINITION>SELECT
+   jt.task_seq,
+   jt.wo_no,
+   jt.customer_no,
+   customer_info_api.get_name(jt.customer_no) AS customer_name,
+   csa.address AS customer_address,
+   TO_CHAR(jt.actual_start, &apos;DD/MM/YYYY&apos;) AS start_date,
+   TO_CHAR(jt.actual_start, &apos;HH24:MI:SS&apos;) AS start_time24h,
+   TO_CHAR(jt.actual_start, &apos;HH:MI:SS AM&apos;) AS start_time12h,
+   MAX(
+      CASE
+         WHEN s.survey_id = &apos;BEFORE_CLEAN_SURVEY&apos;
+         AND survey_question_api.get_question_no(s.survey_id, s.question_id) = &apos;2&apos;
+         THEN survey_alt_item_api.get_item_description(s.alternative_id, s.answer)
+      END
+      ) AS size_of_kitchen,
+   
+   MAX(
+      CASE
+         WHEN s.survey_id = &apos;COMPLETE EXTRACTION&apos;
+         AND survey_question_api.get_question_no(s.survey_id, s.question_id) = &apos;6&apos;
+         THEN s.answer
+      END
+      ) AS ins_finished_date,
+   
+   MAX(
+      CASE
+         WHEN s.survey_id = &apos;COMPLETE EXTRACTION&apos;
+         AND survey_question_api.get_question_no(s.survey_id, s.question_id) = &apos;4&apos;
+         THEN s.answer
+      END
+      ) AS freq_of_cleaning,
+   
+   MAX(
+      CASE
+         WHEN s.survey_id = &apos;COMPLETE EXTRACTION&apos;
+         AND survey_question_api.get_question_no(s.survey_id, s.question_id) = &apos;7&apos;
+         THEN s.answer
+      END
+      ) AS expiry_date
+      
+FROM jt_task_light_uiv jt
+
+LEFT JOIN (
+   SELECT a.customer_id, a.address
+   FROM customer_info_address a
+   JOIN customer_info_address_type t
+   ON a.customer_id = t.customer_id
+   AND a.address_id  = t.address_id
+   WHERE t.def_address = &apos;TRUE&apos;
+   AND t.address_type_code = &apos;Delivery&apos;
+   ) csa
+   ON csa.customer_id = jt.customer_no
+   
+   LEFT JOIN jt_task_survey_answers s
+   ON s.task_seq = jt.task_seq
+   AND s.answer_set = (
+      SELECT MAX(s2.answer_set)
+      FROM jt_task_survey_answers s2
+      WHERE s2.survey_id = s.survey_id
+      AND s2.task_seq  = s.task_seq
+      )
+   
+      WHERE jt.task_seq = task_seq_
+      AND jt.wo_no   = wo_no_
+      
+      GROUP BY
+      jt.task_seq,
+             jt.wo_no,
+             jt.customer_no,
+             jt.actual_start,
+             csa.address</CURSOR_DEFINITION>
+         <PARAMETERS>
+            <BLOCK_PARAMETER>
+               <NAME>TaskSeq</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+            <BLOCK_PARAMETER>
+               <NAME>WoNo</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+         </PARAMETERS>
+         <ATTRIBUTES>
+            <ATTRIBUTE>
+               <NAME>TaskSeq</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WoNo</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerNo</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>20</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerName</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerAddress</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>StartDate</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>10</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>StartTime24h</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>8</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>StartTime12h</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>11</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SizeOfKitchen</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>InsFinishedDate</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>FreqOfCleaning</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ExpiryDate</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+         </ATTRIBUTES>
+         <AGGREGATES>
+            <AGGREGATE>
+               <NAME>ExtDetails</NAME>
+               <IS_ARRAY>1</IS_ARRAY>
+               <BLOCK>ExtSystemCleanDetails</BLOCK>
+               <ATTRIBUTES>
+                  <AGGREGATE_ATTRIBUTE>
+                     <NAME>TaskNo</NAME>
+                  </AGGREGATE_ATTRIBUTE>
+                  <AGGREGATE_ATTRIBUTE>
+                     <NAME>WoNo</NAME>
+                  </AGGREGATE_ATTRIBUTE>
+               </ATTRIBUTES>
+            </AGGREGATE>
+         </AGGREGATES>
+      </BLOCK>
+      <BLOCK>
+         <NAME>ExtSystemCleanDetails</NAME>
+         <CURSOR_DEFINITION>SELECT
+
+/* ================= BEFORE SURVEY================= */
+
+ MAX(CASE
+       WHEN b.question_no = 4 THEN
+        b.answer
+     END) AS wftgm_canopy_before,
+ MAX(CASE
+       WHEN b.question_no = 5 THEN
+        survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+     END) AS cond_before_clean_cnpy,
+ MAX(CASE
+       WHEN b.q3_answer = 1 THEN
+        med_b.item_id
+     END) AS image_before_clean_cnpy,
+ 
+ MAX(CASE
+       WHEN b.question_no = 7 THEN
+        b.answer
+     END) AS wftgm_duct1_before,
+ MAX(CASE
+       WHEN b.question_no = 8 THEN
+        survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+     END) AS cond_befr_clean_duct1,
+ MAX(CASE
+       WHEN b.q3_answer = 2 THEN
+        med_b.item_id
+     END) AS image_befr_clean_duct1,
+ 
+ MAX(CASE
+       WHEN b.question_no = 10 THEN
+        b.answer
+     END) AS wftgm_fan_before,
+ MAX(CASE
+       WHEN b.question_no = 11 THEN
+        survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+     END) AS cond_befr_clean_fan,
+ MAX(CASE
+       WHEN b.q3_answer = 3 THEN
+        med_b.item_id
+     END) AS image_befr_clean_fan,
+ 
+ MAX(CASE
+       WHEN b.question_no = 13 THEN
+        b.answer
+     END) AS wftgm_discharge_before,
+ MAX(CASE
+       WHEN b.question_no = 14 THEN
+        survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+     END) AS cond_befr_clean_discharge,
+ MAX(CASE
+       WHEN b.q3_answer = 4 THEN
+        med_b.item_id
+     END) AS image_befr_clean_discharge,
+ 
+ (NVL(MAX(CASE
+            WHEN b.question_no = 4 THEN
+             TO_NUMBER(b.answer)
+          END),
+      0) + NVL(MAX(CASE
+                      WHEN b.question_no = 7 THEN
+                       TO_NUMBER(b.answer)
+                    END),
+                0) + NVL(MAX(CASE
+                                WHEN b.question_no = 10 THEN
+                                 TO_NUMBER(b.answer)
+                              END),
+                          0) + NVL(MAX(CASE
+                                          WHEN b.question_no = 13 THEN
+                                           TO_NUMBER(b.answer)
+                                        END),
+                                    0)) AS total_before,
+ 
+ (NVL(MAX(CASE
+            WHEN b.question_no = 4 THEN
+             TO_NUMBER(b.answer)
+          END),
+      0) + NVL(MAX(CASE
+                      WHEN b.question_no = 7 THEN
+                       TO_NUMBER(b.answer)
+                    END),
+                0) + NVL(MAX(CASE
+                                WHEN b.question_no = 10 THEN
+                                 TO_NUMBER(b.answer)
+                              END),
+                          0) + NVL(MAX(CASE
+                                          WHEN b.question_no = 13 THEN
+                                           TO_NUMBER(b.answer)
+                                        END),
+                                    0)) / 4 AS mean_before,
+ 
+ /* ================= AFTER SURVEY================= */
+ 
+ MAX(CASE
+       WHEN a.question_no = 2 THEN
+        a.answer
+     END) AS wftgm_canopy_after,
+ MAX(CASE
+       WHEN a.question_no = 4 THEN
+        survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+     END) AS cond_after_clean_cnpy,
+ MAX(CASE
+       WHEN a.q3_answer = 1 THEN
+        med_a.item_id
+     END) AS image_after_clean_cnpy,
+ 
+ MAX(CASE
+       WHEN a.question_no = 6 THEN
+        a.answer
+     END) AS wftgm_duct1_after,
+ MAX(CASE
+       WHEN a.question_no = 7 THEN
+        survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+     END) AS cond_after_clean_duct1,
+ MAX(CASE
+       WHEN a.q3_answer = 2 THEN
+        med_a.item_id
+     END) AS image_after_clean_duct1,
+ 
+ MAX(CASE
+       WHEN a.question_no = 9 THEN
+        a.answer
+     END) AS wftgm_fan_after,
+ MAX(CASE
+       WHEN a.question_no = 10 THEN
+        survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+     END) AS cond_after_clean_fan,
+ MAX(CASE
+       WHEN a.q3_answer = 3 THEN
+        med_a.item_id
+     END) AS image_after_clean_fan,
+ 
+ MAX(CASE
+       WHEN a.question_no = 12 THEN
+        a.answer
+     END) AS wftgm_discharge_after,
+ MAX(CASE
+       WHEN a.question_no = 13 THEN
+        survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+     END) AS cond_after_clean_discharge,
+ MAX(CASE
+       WHEN a.q3_answer = 4 THEN
+        med_a.item_id
+     END) AS image_after_clean_discharge,
+ 
+ /* ================= COMPLETE EXTRACTION SURVEY ================= */
+ 
+ MAX(CASE
+       WHEN c.question_no = 2 THEN
+        c.answer
+     END) AS description,
+ MAX(med_c.sd_item_id) AS image_of_scheme_diagram,
+ MAX(med_c.wc_item_id) AS image_of_work
+
+  FROM dual
+
+/* ================= BEFORE SURVEY ================= */
+  left join (SELECT j.task_seq,
+                    j.wo_no,
+                    survey_question_api.get_question_no(j.survey_id,
+                                                        j.question_id) question_no,
+                    latest.q3_answer,
+                    latest.latest_answer_set,
+                    j.answer,
+                    j.answer_id,
+                    j.alternative_id
+               FROM jt_task_survey_answers j
+               JOIN (SELECT jt.answer q3_answer,
+                           MAX(jt.answer_set) latest_answer_set
+                      FROM jt_task_survey_answers jt
+                     WHERE jt.task_seq = task_seq_
+                       AND jt.survey_id = &apos;BEFORE_CLEAN_SURVEY&apos;
+                       AND survey_question_api.get_question_no(jt.survey_id,
+                                                               jt.question_id) = 3
+                     GROUP BY jt.answer) latest
+                 ON j.answer_set = latest.latest_answer_set
+                AND j.survey_id = &apos;BEFORE_CLEAN_SURVEY&apos;
+                AND j.task_seq = task_seq_
+                AND j.wo_no = wo_no_) b
+    ON 1 = 1
+
+/* BEFORE CAPTURE IMAGES */
+  LEFT JOIN jt_task_survey_answers cib
+    ON cib.main_answer_set = b.latest_answer_set
+   AND cib.task_seq = b.task_seq
+   AND cib.survey_id = &apos;CAPTURE_IMAGES&apos;
+   AND cib.root_survey_id = &apos;BEFORE_CLEAN_SURVEY&apos;
+
+/* BEFORE MEDIA */
+  LEFT JOIN (SELECT ml.connected_obj_ref1 AS answer_id,
+                    MAX(mj.item_id) item_id
+               FROM MEDIA_LIBRARY_ITEM_JOIN mj
+               JOIN MEDIA_LIBRARY ml
+                 ON ml.library_id = mj.library_id
+              GROUP BY ml.connected_obj_ref1) med_b
+    ON med_b.answer_id = cib.answer_id
+
+/* ================= AFTER SURVEY ================= */
+  LEFT JOIN (SELECT j.task_seq,
+                    j.wo_no,
+                    survey_question_api.get_question_no(j.survey_id,
+                                                        j.question_id) question_no,
+                    latest.q3_answer,
+                    latest.latest_answer_set,
+                    j.answer,
+                    j.answer_id,
+                    j.alternative_id
+               FROM jt_task_survey_answers j
+               JOIN (SELECT jt.answer q3_answer,
+                           MAX(jt.answer_set) latest_answer_set
+                      FROM jt_task_survey_answers jt
+                     WHERE jt.task_seq = task_seq_
+                       AND jt.survey_id = &apos;AFTER_CLEAN_SURVEY&apos;
+                       AND survey_question_api.get_question_no(jt.survey_id,
+                                                               jt.question_id) = 2
+                     GROUP BY jt.answer) latest
+                 ON j.answer_set = latest.latest_answer_set
+                AND j.survey_id = &apos;AFTER_CLEAN_SURVEY&apos;
+                AND j.task_seq = task_seq_
+                AND j.wo_no = wo_no_) a
+    ON 1 = 1
+
+/* AFTER CAPTURE IMAGES */
+  LEFT JOIN jt_task_survey_answers ci_a
+    ON ci_a.main_answer_set = a.latest_answer_set
+   AND ci_a.task_seq = a.task_seq
+   AND ci_a.survey_id = &apos;CAPTURE_IMAGES&apos;
+   AND ci_a.root_survey_id = &apos;AFTER_CLEAN_SURVEY&apos;
+
+/* AFTER MEDIA */
+  LEFT JOIN (SELECT ml.connected_obj_ref1 AS answer_id,
+                    MAX(mj.item_id) item_id
+               FROM MEDIA_LIBRARY_ITEM_JOIN mj
+               JOIN MEDIA_LIBRARY ml
+                 ON ml.library_id = mj.library_id
+              GROUP BY ml.connected_obj_ref1) med_a
+    ON med_a.answer_id = ci_a.answer_id
+
+/* ================= COMPLETE EXTRACTION SURVEY ================= */
+  left join (SELECT s.task_seq,
+                    s.wo_no,
+                    survey_question_api.get_question_no(s.survey_id,
+                                                        s.question_id) question_no,
+                    s.answer_set,
+                    s.answer,
+                    s.answer_id,
+                    s.alternative_id
+               FROM jt_task_survey_answers s
+              WHERE s.task_seq = task_seq_
+                AND s.wo_no = wo_no_
+                AND S.survey_id = &apos;COMPLETE EXTRACTION&apos;
+                AND s.answer_set =
+                    (SELECT MAX(s2.answer_set)
+                       FROM jt_task_survey_answers s2
+                      WHERE s2.survey_id = s.survey_id
+                        AND s2.task_seq = s.task_seq)) c
+    ON 1 = 1
+
+/* COMPLETE EXTRACTION SURVEY MEDIA */
+  LEFT JOIN (SELECT s.task_seq,
+                    s.wo_no,
+                    s.answer_set,
+                    MAX(s.answer_id) AS answer_id,
+                    MAX(mj.item_id) AS sd_item_id,
+                    MIN(mj.item_id) AS wc_item_id
+               FROM jt_task_survey_answers s
+               join media_library ml
+                 ON ml.connected_obj_ref1 = s.answer_id
+               JOIN media_library_item_join mj
+                 ON ml.library_id = mj.library_id
+              WHERE s.task_seq = task_seq_
+                AND s.wo_no = wo_no_
+                AND s.survey_id = &apos;CAPTURE_IMAGES&apos;
+                AND s.root_survey_id = &apos;COMPLETE EXTRACTION&apos;
+                AND s.main_answer_set =
+                    (SELECT MAX(s2.answer_set)
+                       FROM jt_task_survey_answers s2
+                      WHERE s2.task_seq = task_seq_
+                        AND s2.survey_id = &apos;COMPLETE EXTRACTION&apos;)
+              GROUP BY s.task_seq, s.wo_no, s.answer_set) med_c
+    ON 1 = 1</CURSOR_DEFINITION>
+         <PARAMETERS>
+            <BLOCK_PARAMETER>
+               <NAME>TaskSeq</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+            <BLOCK_PARAMETER>
+               <NAME>WoNo</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+         </PARAMETERS>
+         <ATTRIBUTES>
+            <ATTRIBUTE>
+               <NAME>WftgmCanopyBefore</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondBeforeCleanCnpy</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageBeforeCleanCnpy</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmDuct1Before</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondBefrCleanDuct1</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageBefrCleanDuct1</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmFanBefore</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondBefrCleanFan</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageBefrCleanFan</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmDischargeBefore</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondBefrCleanDischarge</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageBefrCleanDischarge</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>TotalBefore</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>MeanBefore</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmCanopyAfter</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondAfterCleanCnpy</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageAfterCleanCnpy</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmDuct1After</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondAfterCleanDuct1</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageAfterCleanDuct1</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmFanAfter</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondAfterCleanFan</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageAfterCleanFan</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WftgmDischargeAfter</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CondAfterCleanDischarge</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageAfterCleanDischarge</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>Description</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageOfSchemeDiagram</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ImageOfWork</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+         </ATTRIBUTES>
+      </BLOCK>
+   </BLOCKS>
+   <PARAMETERS>
+      <PARAMETER>
+         <NAME>WoNo</NAME>
+         <PARAMETER_DATATYPE>NUMBER</PARAMETER_DATATYPE>
+         <IS_MANDATORY>0</IS_MANDATORY>
+         <IS_CUSTOM>0</IS_CUSTOM>
+         <IS_SINGLE>0</IS_SINGLE>
+         <ALLOW_BETWEEN>0</ALLOW_BETWEEN>
+         <ALLOW_WILDCARDS>0</ALLOW_WILDCARDS>
+      </PARAMETER>
+      <PARAMETER>
+         <NAME>TaskNo</NAME>
+         <PARAMETER_DATATYPE>NUMBER</PARAMETER_DATATYPE>
+         <IS_MANDATORY>0</IS_MANDATORY>
+         <IS_CUSTOM>0</IS_CUSTOM>
+         <IS_SINGLE>0</IS_SINGLE>
+         <ALLOW_BETWEEN>0</ALLOW_BETWEEN>
+         <ALLOW_WILDCARDS>0</ALLOW_WILDCARDS>
+      </PARAMETER>
+   </PARAMETERS>
+   <TEXTS>
+      <TEXT>
+         <NAME>ExtSystemClean</NAME>
+         <VALUE>Sample</VALUE>
+      </TEXT>
+   </TEXTS>
+   <AGGREGATES>
+      <AGGREGATE>
+         <NAME>Headers1</NAME>
+         <IS_ARRAY>1</IS_ARRAY>
+         <BLOCK>ExtSystemCleanHeader</BLOCK>
+         <ATTRIBUTES>
+            <AGGREGATE_ATTRIBUTE>
+               <NAME>TaskNo</NAME>
+            </AGGREGATE_ATTRIBUTE>
+            <AGGREGATE_ATTRIBUTE>
+               <NAME>WoNo</NAME>
+            </AGGREGATE_ATTRIBUTE>
+         </ATTRIBUTES>
+      </AGGREGATE>
+   </AGGREGATES>
+</REPORT>

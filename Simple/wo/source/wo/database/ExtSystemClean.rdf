@@ -1,0 +1,877 @@
+-----------------------------------------------------------------------------
+--
+--  Logical unit: ExtSysClean
+--
+--  Report:       ExtSystemClean
+--
+--  IFS Developer Studio Template Version 1.3
+--
+--  NOTE: This file is generated and will be overwritten at next model change
+-----------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE SPECIFICATION ----------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating EXT_SYSTEM_CLEAN_RPI specification
+
+CREATE OR REPLACE PACKAGE EXT_SYSTEM_CLEAN_RPI AS
+
+module_ CONSTANT VARCHAR2(6) := 'WO';
+lu_name_ CONSTANT VARCHAR2(25) := 'ExtSysClean';
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 );
+
+FUNCTION Test (
+   wo_no_                    IN NUMBER,
+   task_no_                  IN NUMBER)
+   RETURN NUMBER;
+
+PROCEDURE Init;
+
+END EXT_SYSTEM_CLEAN_RPI;
+/
+SHOW ERROR
+
+-----------------------------------------------------------------------------
+-------------------- VIEWS FOR REPORT META DATA -----------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating report table EXT_SYSTEM_CLEAN_RPT
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'EXT_SYSTEM_CLEAN_RPT';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROWVERSION', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WO_NO', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'TASK_NO', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'TASK_SEQ', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_NO', 'VARCHAR2(20)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_NAME', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_ADDRESS', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'START_DATE', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'START_TIME24H', 'VARCHAR2(8)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'START_TIME12H', 'VARCHAR2(11)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SIZE_OF_KITCHEN', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'INS_FINISHED_DATE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'FREQ_OF_CLEANING', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'EXPIRY_DATE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_CANOPY_BEFORE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_BEFORE_CLEAN_CNPY', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_BEFORE_CLEAN_CNPY', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_DUCT1_BEFORE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_BEFR_CLEAN_DUCT1', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_BEFR_CLEAN_DUCT1', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_FAN_BEFORE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_BEFR_CLEAN_FAN', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_BEFR_CLEAN_FAN', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_DISCHARGE_BEFORE', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_BEFR_CLEAN_DISCHARGE', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_BEFR_CLEAN_DISCHARGE', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'TOTAL_BEFORE', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'MEAN_BEFORE', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_CANOPY_AFTER', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_AFTER_CLEAN_CNPY', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_AFTER_CLEAN_CNPY', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_DUCT1_AFTER', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_AFTER_CLEAN_DUCT1', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_AFTER_CLEAN_DUCT1', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_FAN_AFTER', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_AFTER_CLEAN_FAN', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_AFTER_CLEAN_FAN', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WFTGM_DISCHARGE_AFTER', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'COND_AFTER_CLEAN_DISCHARGE', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_AFTER_CLEAN_DISCHARGE', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'DESCRIPTION', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_OF_SCHEME_DIAGRAM', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'IMAGE_OF_WORK', 'NUMBER', 'Y');
+   Database_SYS.Create_Or_Replace_Table(table_name_, columns_, '&IFSAPP_REPORT_DATA', NULL, TRUE);
+END;
+/
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'EXT_SYSTEM_CLEAN_RPT';
+   index_name_ VARCHAR2(30) := 'EXT_SYSTEM_CLEAN_RPK';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO');
+   Database_SYS.Create_Constraint(table_name_, index_name_, columns_, 'P', '&IFSAPP_REPORT_INDEX', NULL, TRUE, TRUE);
+   Database_SYS.Reset_Column_Table(columns_);
+END;
+/
+
+PROMPT Creating report view EXT_SYSTEM_CLEAN_REP
+
+CREATE OR REPLACE VIEW EXT_SYSTEM_CLEAN_REP AS
+SELECT RESULT_KEY, ROW_NO, PARENT_ROW_NO, ROWVERSION
+   ,WO_NO,TASK_NO,TASK_SEQ,CUSTOMER_NO,CUSTOMER_NAME,CUSTOMER_ADDRESS,START_DATE,START_TIME24H,START_TIME12H,SIZE_OF_KITCHEN,INS_FINISHED_DATE,FREQ_OF_CLEANING,EXPIRY_DATE,WFTGM_CANOPY_BEFORE,COND_BEFORE_CLEAN_CNPY,IMAGE_BEFORE_CLEAN_CNPY,WFTGM_DUCT1_BEFORE,COND_BEFR_CLEAN_DUCT1,IMAGE_BEFR_CLEAN_DUCT1,WFTGM_FAN_BEFORE,COND_BEFR_CLEAN_FAN,IMAGE_BEFR_CLEAN_FAN,WFTGM_DISCHARGE_BEFORE,COND_BEFR_CLEAN_DISCHARGE,IMAGE_BEFR_CLEAN_DISCHARGE,TOTAL_BEFORE,MEAN_BEFORE,WFTGM_CANOPY_AFTER,COND_AFTER_CLEAN_CNPY,IMAGE_AFTER_CLEAN_CNPY,WFTGM_DUCT1_AFTER,COND_AFTER_CLEAN_DUCT1,IMAGE_AFTER_CLEAN_DUCT1,WFTGM_FAN_AFTER,COND_AFTER_CLEAN_FAN,IMAGE_AFTER_CLEAN_FAN,WFTGM_DISCHARGE_AFTER,COND_AFTER_CLEAN_DISCHARGE,IMAGE_AFTER_CLEAN_DISCHARGE,DESCRIPTION,IMAGE_OF_SCHEME_DIAGRAM,IMAGE_OF_WORK
+FROM   EXT_SYSTEM_CLEAN_RPT t
+WHERE EXISTS (SELECT 1 FROM allowed_report a WHERE a.result_key = t.result_key)
+WITH   read only;
+
+COMMENT ON TABLE EXT_SYSTEM_CLEAN_REP
+   IS 'LU=ExtSysClean^PROMPT=Ext System Clean^MODULE=WO^TITLETEXT=Extraction System Cleaning^';
+
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.result_key
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.row_no
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wo_no
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Wo No^QUERY=Wo No:^QFLAGS=OW---^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.task_no
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Task No^QUERY=Task No:^QFLAGS=OW---^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.task_seq
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Task Seq^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.customer_no
+   IS 'FLAGS=A----^DATATYPE=STRING(20)^TITLE=Customer No^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.customer_name
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Customer Name^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.customer_address
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Customer Address^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.start_date
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=Start Date^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.start_time24h
+   IS 'FLAGS=A----^DATATYPE=STRING(8)^TITLE=Start Time24h^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.start_time12h
+   IS 'FLAGS=A----^DATATYPE=STRING(11)^TITLE=Start Time12h^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.size_of_kitchen
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Size Of Kitchen^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.ins_finished_date
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Ins Finished Date^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.freq_of_cleaning
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Freq Of Cleaning^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.expiry_date
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Expiry Date^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_canopy_before
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Canopy Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_before_clean_cnpy
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond Before Clean Cnpy^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_before_clean_cnpy
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Before Clean Cnpy^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_duct1_before
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Duct1 Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_befr_clean_duct1
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond Befr Clean Duct1^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_befr_clean_duct1
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Befr Clean Duct1^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_fan_before
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Fan Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_befr_clean_fan
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond Befr Clean Fan^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_befr_clean_fan
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Befr Clean Fan^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_discharge_before
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Discharge Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_befr_clean_discharge
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond Befr Clean Discharge^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_befr_clean_discharge
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Befr Clean Discharge^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.total_before
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Total Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.mean_before
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Mean Before^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_canopy_after
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Canopy After^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_after_clean_cnpy
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond After Clean Cnpy^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_after_clean_cnpy
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image After Clean Cnpy^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_duct1_after
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Duct1 After^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_after_clean_duct1
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond After Clean Duct1^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_after_clean_duct1
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image After Clean Duct1^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_fan_after
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Fan After^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_after_clean_fan
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond After Clean Fan^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_after_clean_fan
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image After Clean Fan^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.wftgm_discharge_after
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Wftgm Discharge After^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.cond_after_clean_discharge
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Cond After Clean Discharge^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_after_clean_discharge
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image After Clean Discharge^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.description
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Description^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_of_scheme_diagram
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Of Scheme Diagram^';
+COMMENT ON COLUMN EXT_SYSTEM_CLEAN_REP.image_of_work
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Image Of Work^';
+
+-----------------------------------------------------------------------------
+-------------------- REPORT REGISTRATION ------------------------------------
+-----------------------------------------------------------------------------
+
+BEGIN
+   Report_SYS.Define_Report_('EXT_SYSTEM_CLEAN_REP', 'WO', 'ExtSysClean', 'Extraction System Cleaning', 'EXT_SYSTEM_CLEAN_RPT', 'EXT_SYSTEM_CLEAN_RPI.Execute_Report', 0);
+   Report_SYS.Define_Report_Text_('EXT_SYSTEM_CLEAN_REP', 'EXT_SYSTEM_CLEAN', 'Sample');
+   Report_SYS.Refresh_('EXT_SYSTEM_CLEAN_REP');
+   Report_Lu_Definition_API.Clear_Custom_Fields_For_Report('EXT_SYSTEM_CLEAN_REP');
+END;
+/
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE IMPLEMENTATION ---------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating EXT_SYSTEM_CLEAN_RPI implementation
+
+CREATE OR REPLACE PACKAGE BODY EXT_SYSTEM_CLEAN_RPI IS
+
+   TYPE binds$ IS RECORD (
+      wo_no                     NUMBER,
+      task_no                   NUMBER,
+      task_seq                  VARCHAR2(32000));
+
+   CURSOR get_ext_system_clean_header (task_seq_ VARCHAR2, wo_no_ VARCHAR2) IS
+      SELECT
+         jt.task_seq,
+         jt.wo_no,
+         jt.customer_no,
+         customer_info_api.get_name(jt.customer_no) AS customer_name,
+         csa.address AS customer_address,
+         TO_CHAR(jt.actual_start, 'DD/MM/YYYY') AS start_date,
+         TO_CHAR(jt.actual_start, 'HH24:MI:SS') AS start_time24h,
+         TO_CHAR(jt.actual_start, 'HH:MI:SS AM') AS start_time12h,
+         MAX(
+            CASE
+               WHEN s.survey_id = 'BEFORE_CLEAN_SURVEY'
+               AND survey_question_api.get_question_no(s.survey_id, s.question_id) = '2'
+               THEN survey_alt_item_api.get_item_description(s.alternative_id, s.answer)
+            END
+            ) AS size_of_kitchen,
+         
+         MAX(
+            CASE
+               WHEN s.survey_id = 'COMPLETE EXTRACTION'
+               AND survey_question_api.get_question_no(s.survey_id, s.question_id) = '6'
+               THEN s.answer
+            END
+            ) AS ins_finished_date,
+         
+         MAX(
+            CASE
+               WHEN s.survey_id = 'COMPLETE EXTRACTION'
+               AND survey_question_api.get_question_no(s.survey_id, s.question_id) = '4'
+               THEN s.answer
+            END
+            ) AS freq_of_cleaning,
+         
+         MAX(
+            CASE
+               WHEN s.survey_id = 'COMPLETE EXTRACTION'
+               AND survey_question_api.get_question_no(s.survey_id, s.question_id) = '7'
+               THEN s.answer
+            END
+            ) AS expiry_date
+            
+      FROM jt_task_light_uiv jt
+      
+      LEFT JOIN (
+         SELECT a.customer_id, a.address
+         FROM customer_info_address a
+         JOIN customer_info_address_type t
+         ON a.customer_id = t.customer_id
+         AND a.address_id  = t.address_id
+         WHERE t.def_address = 'TRUE'
+         AND t.address_type_code = 'Delivery'
+         ) csa
+         ON csa.customer_id = jt.customer_no
+         
+         LEFT JOIN jt_task_survey_answers s
+         ON s.task_seq = jt.task_seq
+         AND s.answer_set = (
+            SELECT MAX(s2.answer_set)
+            FROM jt_task_survey_answers s2
+            WHERE s2.survey_id = s.survey_id
+            AND s2.task_seq  = s.task_seq
+            )
+         
+            WHERE jt.task_seq = task_seq_
+            AND jt.wo_no   = wo_no_
+            
+            GROUP BY
+            jt.task_seq,
+                   jt.wo_no,
+                   jt.customer_no,
+                   jt.actual_start,
+                   csa.address;
+
+   CURSOR get_ext_system_clean_details (task_seq_ VARCHAR2, wo_no_ VARCHAR2) IS
+      SELECT
+      
+      /* ================= BEFORE SURVEY================= */
+      
+       MAX(CASE
+             WHEN b.question_no = 4 THEN
+              b.answer
+           END) AS wftgm_canopy_before,
+       MAX(CASE
+             WHEN b.question_no = 5 THEN
+              survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+           END) AS cond_before_clean_cnpy,
+       MAX(CASE
+             WHEN b.q3_answer = 1 THEN
+              med_b.item_id
+           END) AS image_before_clean_cnpy,
+       
+       MAX(CASE
+             WHEN b.question_no = 7 THEN
+              b.answer
+           END) AS wftgm_duct1_before,
+       MAX(CASE
+             WHEN b.question_no = 8 THEN
+              survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+           END) AS cond_befr_clean_duct1,
+       MAX(CASE
+             WHEN b.q3_answer = 2 THEN
+              med_b.item_id
+           END) AS image_befr_clean_duct1,
+       
+       MAX(CASE
+             WHEN b.question_no = 10 THEN
+              b.answer
+           END) AS wftgm_fan_before,
+       MAX(CASE
+             WHEN b.question_no = 11 THEN
+              survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+           END) AS cond_befr_clean_fan,
+       MAX(CASE
+             WHEN b.q3_answer = 3 THEN
+              med_b.item_id
+           END) AS image_befr_clean_fan,
+       
+       MAX(CASE
+             WHEN b.question_no = 13 THEN
+              b.answer
+           END) AS wftgm_discharge_before,
+       MAX(CASE
+             WHEN b.question_no = 14 THEN
+              survey_alt_item_api.Get_Item_Description(b.alternative_id, b.answer)
+           END) AS cond_befr_clean_discharge,
+       MAX(CASE
+             WHEN b.q3_answer = 4 THEN
+              med_b.item_id
+           END) AS image_befr_clean_discharge,
+       
+       (NVL(MAX(CASE
+                  WHEN b.question_no = 4 THEN
+                   TO_NUMBER(b.answer)
+                END),
+            0) + NVL(MAX(CASE
+                            WHEN b.question_no = 7 THEN
+                             TO_NUMBER(b.answer)
+                          END),
+                      0) + NVL(MAX(CASE
+                                      WHEN b.question_no = 10 THEN
+                                       TO_NUMBER(b.answer)
+                                    END),
+                                0) + NVL(MAX(CASE
+                                                WHEN b.question_no = 13 THEN
+                                                 TO_NUMBER(b.answer)
+                                              END),
+                                          0)) AS total_before,
+       
+       (NVL(MAX(CASE
+                  WHEN b.question_no = 4 THEN
+                   TO_NUMBER(b.answer)
+                END),
+            0) + NVL(MAX(CASE
+                            WHEN b.question_no = 7 THEN
+                             TO_NUMBER(b.answer)
+                          END),
+                      0) + NVL(MAX(CASE
+                                      WHEN b.question_no = 10 THEN
+                                       TO_NUMBER(b.answer)
+                                    END),
+                                0) + NVL(MAX(CASE
+                                                WHEN b.question_no = 13 THEN
+                                                 TO_NUMBER(b.answer)
+                                              END),
+                                          0)) / 4 AS mean_before,
+       
+       /* ================= AFTER SURVEY================= */
+       
+       MAX(CASE
+             WHEN a.question_no = 2 THEN
+              a.answer
+           END) AS wftgm_canopy_after,
+       MAX(CASE
+             WHEN a.question_no = 4 THEN
+              survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+           END) AS cond_after_clean_cnpy,
+       MAX(CASE
+             WHEN a.q3_answer = 1 THEN
+              med_a.item_id
+           END) AS image_after_clean_cnpy,
+       
+       MAX(CASE
+             WHEN a.question_no = 6 THEN
+              a.answer
+           END) AS wftgm_duct1_after,
+       MAX(CASE
+             WHEN a.question_no = 7 THEN
+              survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+           END) AS cond_after_clean_duct1,
+       MAX(CASE
+             WHEN a.q3_answer = 2 THEN
+              med_a.item_id
+           END) AS image_after_clean_duct1,
+       
+       MAX(CASE
+             WHEN a.question_no = 9 THEN
+              a.answer
+           END) AS wftgm_fan_after,
+       MAX(CASE
+             WHEN a.question_no = 10 THEN
+              survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+           END) AS cond_after_clean_fan,
+       MAX(CASE
+             WHEN a.q3_answer = 3 THEN
+              med_a.item_id
+           END) AS image_after_clean_fan,
+       
+       MAX(CASE
+             WHEN a.question_no = 12 THEN
+              a.answer
+           END) AS wftgm_discharge_after,
+       MAX(CASE
+             WHEN a.question_no = 13 THEN
+              survey_alt_item_api.Get_Item_Description(a.alternative_id, a.answer)
+           END) AS cond_after_clean_discharge,
+       MAX(CASE
+             WHEN a.q3_answer = 4 THEN
+              med_a.item_id
+           END) AS image_after_clean_discharge,
+       
+       /* ================= COMPLETE EXTRACTION SURVEY ================= */
+       
+       MAX(CASE
+             WHEN c.question_no = 2 THEN
+              c.answer
+           END) AS description,
+       MAX(med_c.sd_item_id) AS image_of_scheme_diagram,
+       MAX(med_c.wc_item_id) AS image_of_work
+      
+        FROM dual
+      
+      /* ================= BEFORE SURVEY ================= */
+        left join (SELECT j.task_seq,
+                          j.wo_no,
+                          survey_question_api.get_question_no(j.survey_id,
+                                                              j.question_id) question_no,
+                          latest.q3_answer,
+                          latest.latest_answer_set,
+                          j.answer,
+                          j.answer_id,
+                          j.alternative_id
+                     FROM jt_task_survey_answers j
+                     JOIN (SELECT jt.answer q3_answer,
+                                 MAX(jt.answer_set) latest_answer_set
+                            FROM jt_task_survey_answers jt
+                           WHERE jt.task_seq = task_seq_
+                             AND jt.survey_id = 'BEFORE_CLEAN_SURVEY'
+                             AND survey_question_api.get_question_no(jt.survey_id,
+                                                                     jt.question_id) = 3
+                           GROUP BY jt.answer) latest
+                       ON j.answer_set = latest.latest_answer_set
+                      AND j.survey_id = 'BEFORE_CLEAN_SURVEY'
+                      AND j.task_seq = task_seq_
+                      AND j.wo_no = wo_no_) b
+          ON 1 = 1
+      
+      /* BEFORE CAPTURE IMAGES */
+        LEFT JOIN jt_task_survey_answers cib
+          ON cib.main_answer_set = b.latest_answer_set
+         AND cib.task_seq = b.task_seq
+         AND cib.survey_id = 'CAPTURE_IMAGES'
+         AND cib.root_survey_id = 'BEFORE_CLEAN_SURVEY'
+      
+      /* BEFORE MEDIA */
+        LEFT JOIN (SELECT ml.connected_obj_ref1 AS answer_id,
+                          MAX(mj.item_id) item_id
+                     FROM MEDIA_LIBRARY_ITEM_JOIN mj
+                     JOIN MEDIA_LIBRARY ml
+                       ON ml.library_id = mj.library_id
+                    GROUP BY ml.connected_obj_ref1) med_b
+          ON med_b.answer_id = cib.answer_id
+      
+      /* ================= AFTER SURVEY ================= */
+        LEFT JOIN (SELECT j.task_seq,
+                          j.wo_no,
+                          survey_question_api.get_question_no(j.survey_id,
+                                                              j.question_id) question_no,
+                          latest.q3_answer,
+                          latest.latest_answer_set,
+                          j.answer,
+                          j.answer_id,
+                          j.alternative_id
+                     FROM jt_task_survey_answers j
+                     JOIN (SELECT jt.answer q3_answer,
+                                 MAX(jt.answer_set) latest_answer_set
+                            FROM jt_task_survey_answers jt
+                           WHERE jt.task_seq = task_seq_
+                             AND jt.survey_id = 'AFTER_CLEAN_SURVEY'
+                             AND survey_question_api.get_question_no(jt.survey_id,
+                                                                     jt.question_id) = 2
+                           GROUP BY jt.answer) latest
+                       ON j.answer_set = latest.latest_answer_set
+                      AND j.survey_id = 'AFTER_CLEAN_SURVEY'
+                      AND j.task_seq = task_seq_
+                      AND j.wo_no = wo_no_) a
+          ON 1 = 1
+      
+      /* AFTER CAPTURE IMAGES */
+        LEFT JOIN jt_task_survey_answers ci_a
+          ON ci_a.main_answer_set = a.latest_answer_set
+         AND ci_a.task_seq = a.task_seq
+         AND ci_a.survey_id = 'CAPTURE_IMAGES'
+         AND ci_a.root_survey_id = 'AFTER_CLEAN_SURVEY'
+      
+      /* AFTER MEDIA */
+        LEFT JOIN (SELECT ml.connected_obj_ref1 AS answer_id,
+                          MAX(mj.item_id) item_id
+                     FROM MEDIA_LIBRARY_ITEM_JOIN mj
+                     JOIN MEDIA_LIBRARY ml
+                       ON ml.library_id = mj.library_id
+                    GROUP BY ml.connected_obj_ref1) med_a
+          ON med_a.answer_id = ci_a.answer_id
+      
+      /* ================= COMPLETE EXTRACTION SURVEY ================= */
+        left join (SELECT s.task_seq,
+                          s.wo_no,
+                          survey_question_api.get_question_no(s.survey_id,
+                                                              s.question_id) question_no,
+                          s.answer_set,
+                          s.answer,
+                          s.answer_id,
+                          s.alternative_id
+                     FROM jt_task_survey_answers s
+                    WHERE s.task_seq = task_seq_
+                      AND s.wo_no = wo_no_
+                      AND S.survey_id = 'COMPLETE EXTRACTION'
+                      AND s.answer_set =
+                          (SELECT MAX(s2.answer_set)
+                             FROM jt_task_survey_answers s2
+                            WHERE s2.survey_id = s.survey_id
+                              AND s2.task_seq = s.task_seq)) c
+          ON 1 = 1
+      
+      /* COMPLETE EXTRACTION SURVEY MEDIA */
+        LEFT JOIN (SELECT s.task_seq,
+                          s.wo_no,
+                          s.answer_set,
+                          MAX(s.answer_id) AS answer_id,
+                          MAX(mj.item_id) AS sd_item_id,
+                          MIN(mj.item_id) AS wc_item_id
+                     FROM jt_task_survey_answers s
+                     join media_library ml
+                       ON ml.connected_obj_ref1 = s.answer_id
+                     JOIN media_library_item_join mj
+                       ON ml.library_id = mj.library_id
+                    WHERE s.task_seq = task_seq_
+                      AND s.wo_no = wo_no_
+                      AND s.survey_id = 'CAPTURE_IMAGES'
+                      AND s.root_survey_id = 'COMPLETE EXTRACTION'
+                      AND s.main_answer_set =
+                          (SELECT MAX(s2.answer_set)
+                             FROM jt_task_survey_answers s2
+                            WHERE s2.task_seq = task_seq_
+                              AND s2.survey_id = 'COMPLETE EXTRACTION')
+                    GROUP BY s.task_seq, s.wo_no, s.answer_set) med_c
+          ON 1 = 1;
+
+-----------------------------------------------------------------------------
+-------------------- RESULT SET METHODS -------------------------------------
+-----------------------------------------------------------------------------
+
+--@IgnoreWrongParamOrder
+PROCEDURE Add_Result_Row___ (
+   result_key$_               IN NUMBER,
+   binds$_                    IN binds$,
+   rec_ext_system_clean_header_ IN get_ext_system_clean_header%ROWTYPE DEFAULT NULL,
+   rec_ext_system_clean_details_ IN get_ext_system_clean_details%ROWTYPE DEFAULT NULL,
+   row_no$_                   IN OUT NUMBER)
+IS
+BEGIN
+   INSERT INTO EXT_SYSTEM_CLEAN_RPT (
+      result_key,
+      wo_no,
+      task_no,
+      task_seq,
+      customer_no,
+      customer_name,
+      customer_address,
+      start_date,
+      start_time24h,
+      start_time12h,
+      size_of_kitchen,
+      ins_finished_date,
+      freq_of_cleaning,
+      expiry_date,
+      wftgm_canopy_before,
+      cond_before_clean_cnpy,
+      image_before_clean_cnpy,
+      wftgm_duct1_before,
+      cond_befr_clean_duct1,
+      image_befr_clean_duct1,
+      wftgm_fan_before,
+      cond_befr_clean_fan,
+      image_befr_clean_fan,
+      wftgm_discharge_before,
+      cond_befr_clean_discharge,
+      image_befr_clean_discharge,
+      total_before,
+      mean_before,
+      wftgm_canopy_after,
+      cond_after_clean_cnpy,
+      image_after_clean_cnpy,
+      wftgm_duct1_after,
+      cond_after_clean_duct1,
+      image_after_clean_duct1,
+      wftgm_fan_after,
+      cond_after_clean_fan,
+      image_after_clean_fan,
+      wftgm_discharge_after,
+      cond_after_clean_discharge,
+      image_after_clean_discharge,
+      description,
+      image_of_scheme_diagram,
+      image_of_work,
+      row_no, parent_row_no)
+   VALUES (
+      result_key$_,
+      nvl(rec_ext_system_clean_header_.wo_no,
+      binds$_.wo_no),
+      binds$_.task_no,
+      rec_ext_system_clean_header_.task_seq,
+      rec_ext_system_clean_header_.customer_no,
+      rec_ext_system_clean_header_.customer_name,
+      rec_ext_system_clean_header_.customer_address,
+      rec_ext_system_clean_header_.start_date,
+      rec_ext_system_clean_header_.start_time24h,
+      rec_ext_system_clean_header_.start_time12h,
+      rec_ext_system_clean_header_.size_of_kitchen,
+      rec_ext_system_clean_header_.ins_finished_date,
+      rec_ext_system_clean_header_.freq_of_cleaning,
+      rec_ext_system_clean_header_.expiry_date,
+      rec_ext_system_clean_details_.wftgm_canopy_before,
+      rec_ext_system_clean_details_.cond_before_clean_cnpy,
+      rec_ext_system_clean_details_.image_before_clean_cnpy,
+      rec_ext_system_clean_details_.wftgm_duct1_before,
+      rec_ext_system_clean_details_.cond_befr_clean_duct1,
+      rec_ext_system_clean_details_.image_befr_clean_duct1,
+      rec_ext_system_clean_details_.wftgm_fan_before,
+      rec_ext_system_clean_details_.cond_befr_clean_fan,
+      rec_ext_system_clean_details_.image_befr_clean_fan,
+      rec_ext_system_clean_details_.wftgm_discharge_before,
+      rec_ext_system_clean_details_.cond_befr_clean_discharge,
+      rec_ext_system_clean_details_.image_befr_clean_discharge,
+      rec_ext_system_clean_details_.total_before,
+      rec_ext_system_clean_details_.mean_before,
+      rec_ext_system_clean_details_.wftgm_canopy_after,
+      rec_ext_system_clean_details_.cond_after_clean_cnpy,
+      rec_ext_system_clean_details_.image_after_clean_cnpy,
+      rec_ext_system_clean_details_.wftgm_duct1_after,
+      rec_ext_system_clean_details_.cond_after_clean_duct1,
+      rec_ext_system_clean_details_.image_after_clean_duct1,
+      rec_ext_system_clean_details_.wftgm_fan_after,
+      rec_ext_system_clean_details_.cond_after_clean_fan,
+      rec_ext_system_clean_details_.image_after_clean_fan,
+      rec_ext_system_clean_details_.wftgm_discharge_after,
+      rec_ext_system_clean_details_.cond_after_clean_discharge,
+      rec_ext_system_clean_details_.image_after_clean_discharge,
+      rec_ext_system_clean_details_.description,
+      rec_ext_system_clean_details_.image_of_scheme_diagram,
+      rec_ext_system_clean_details_.image_of_work,
+      row_no$_, 0);
+   row_no$_ := row_no$_+1;
+END Add_Result_Row___;
+
+-----------------------------------------------------------------------------
+-------------------- REPORT EXECUTION ---------------------------------------
+-----------------------------------------------------------------------------
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 )
+IS
+   result_key$_              NUMBER;
+   row_no$_                  NUMBER := 1;
+   binds$_                   binds$;
+   xml$_                     CLOB;
+   outer_filter_attr$_       VARCHAR2(32000);
+   outer_filter_where$_      VARCHAR2(32000);
+   inner_filter_attr$_       VARCHAR2(32000);
+   inner_filter_where$_      VARCHAR2(32000);
+   has_ext_system_clean_header_ BOOLEAN;
+   rec_ext_system_clean_header_ get_ext_system_clean_header%ROWTYPE;
+   par_ext_system_clean_header_ binds$;
+   has_ext_system_clean_details_ BOOLEAN;
+   rec_ext_system_clean_details_ get_ext_system_clean_details%ROWTYPE;
+   par_ext_system_clean_details_ binds$;
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'EXT_SYSTEM_CLEAN_RPI', 'Execute_Report');
+   result_key$_                 := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('RESULT_KEY', report_attr_));
+   binds$_.wo_no                := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('WO_NO', parameter_attr_));
+   binds$_.task_no              := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('TASK_NO', parameter_attr_));
+
+   Xml_Record_Writer_SYS.Create_Report_Header(xml$_, 'EXT_SYSTEM_CLEAN_REP', 'Extraction System Cleaning');
+
+   has_ext_system_clean_header_ := FALSE;
+   par_ext_system_clean_header_ := binds$_;
+   Xml_Record_Writer_SYS.Start_Element(xml$_, 'HEADERS1');
+   OPEN get_ext_system_clean_header(binds$_.task_no, binds$_.wo_no);
+   LOOP
+      FETCH get_ext_system_clean_header INTO rec_ext_system_clean_header_;
+      has_ext_system_clean_header_ := get_ext_system_clean_header%FOUND OR get_ext_system_clean_header%ROWCOUNT > 0;
+      EXIT WHEN get_ext_system_clean_header%NOTFOUND;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, 'EXT_SYSTEM_CLEAN_HEADER');
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'TASK_SEQ', rec_ext_system_clean_header_.task_seq);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'WO_NO', rec_ext_system_clean_header_.wo_no);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_NO', rec_ext_system_clean_header_.customer_no);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_NAME', rec_ext_system_clean_header_.customer_name);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_ADDRESS', rec_ext_system_clean_header_.customer_address);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'START_DATE', rec_ext_system_clean_header_.start_date);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'START_TIME24H', rec_ext_system_clean_header_.start_time24h);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'START_TIME12H', rec_ext_system_clean_header_.start_time12h);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SIZE_OF_KITCHEN', rec_ext_system_clean_header_.size_of_kitchen);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'INS_FINISHED_DATE', rec_ext_system_clean_header_.ins_finished_date);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'FREQ_OF_CLEANING', rec_ext_system_clean_header_.freq_of_cleaning);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'EXPIRY_DATE', rec_ext_system_clean_header_.expiry_date);
+      has_ext_system_clean_details_ := FALSE;
+      par_ext_system_clean_details_ := binds$_;
+      binds$_.wo_no := rec_ext_system_clean_header_.wo_no;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, 'EXT_DETAILS');
+      OPEN get_ext_system_clean_details(binds$_.task_no, rec_ext_system_clean_header_.wo_no);
+      LOOP
+         FETCH get_ext_system_clean_details INTO rec_ext_system_clean_details_;
+         has_ext_system_clean_details_ := get_ext_system_clean_details%FOUND OR get_ext_system_clean_details%ROWCOUNT > 0;
+         EXIT WHEN get_ext_system_clean_details%NOTFOUND;
+         Xml_Record_Writer_SYS.Start_Element(xml$_, 'EXT_SYSTEM_CLEAN_DETAILS');
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_CANOPY_BEFORE', rec_ext_system_clean_details_.wftgm_canopy_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_BEFORE_CLEAN_CNPY', rec_ext_system_clean_details_.cond_before_clean_cnpy);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_BEFORE_CLEAN_CNPY', rec_ext_system_clean_details_.image_before_clean_cnpy);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_DUCT1_BEFORE', rec_ext_system_clean_details_.wftgm_duct1_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_BEFR_CLEAN_DUCT1', rec_ext_system_clean_details_.cond_befr_clean_duct1);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_BEFR_CLEAN_DUCT1', rec_ext_system_clean_details_.image_befr_clean_duct1);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_FAN_BEFORE', rec_ext_system_clean_details_.wftgm_fan_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_BEFR_CLEAN_FAN', rec_ext_system_clean_details_.cond_befr_clean_fan);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_BEFR_CLEAN_FAN', rec_ext_system_clean_details_.image_befr_clean_fan);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_DISCHARGE_BEFORE', rec_ext_system_clean_details_.wftgm_discharge_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_BEFR_CLEAN_DISCHARGE', rec_ext_system_clean_details_.cond_befr_clean_discharge);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_BEFR_CLEAN_DISCHARGE', rec_ext_system_clean_details_.image_befr_clean_discharge);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'TOTAL_BEFORE', rec_ext_system_clean_details_.total_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'MEAN_BEFORE', rec_ext_system_clean_details_.mean_before);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_CANOPY_AFTER', rec_ext_system_clean_details_.wftgm_canopy_after);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_AFTER_CLEAN_CNPY', rec_ext_system_clean_details_.cond_after_clean_cnpy);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_AFTER_CLEAN_CNPY', rec_ext_system_clean_details_.image_after_clean_cnpy);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_DUCT1_AFTER', rec_ext_system_clean_details_.wftgm_duct1_after);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_AFTER_CLEAN_DUCT1', rec_ext_system_clean_details_.cond_after_clean_duct1);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_AFTER_CLEAN_DUCT1', rec_ext_system_clean_details_.image_after_clean_duct1);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_FAN_AFTER', rec_ext_system_clean_details_.wftgm_fan_after);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_AFTER_CLEAN_FAN', rec_ext_system_clean_details_.cond_after_clean_fan);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_AFTER_CLEAN_FAN', rec_ext_system_clean_details_.image_after_clean_fan);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'WFTGM_DISCHARGE_AFTER', rec_ext_system_clean_details_.wftgm_discharge_after);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'COND_AFTER_CLEAN_DISCHARGE', rec_ext_system_clean_details_.cond_after_clean_discharge);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_AFTER_CLEAN_DISCHARGE', rec_ext_system_clean_details_.image_after_clean_discharge);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'DESCRIPTION', rec_ext_system_clean_details_.description);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_OF_SCHEME_DIAGRAM', rec_ext_system_clean_details_.image_of_scheme_diagram);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'IMAGE_OF_WORK', rec_ext_system_clean_details_.image_of_work);
+         Xml_Record_Writer_SYS.End_Element(xml$_, 'EXT_SYSTEM_CLEAN_DETAILS');
+         Add_Result_Row___(result_key$_,
+                           binds$_ => binds$_,
+                           rec_ext_system_clean_header_ => rec_ext_system_clean_header_,
+                           rec_ext_system_clean_details_ => rec_ext_system_clean_details_,
+                           row_no$_ => row_no$_);
+      END LOOP;
+      CLOSE get_ext_system_clean_details;
+      Xml_Record_Writer_SYS.End_Element(xml$_, 'EXT_DETAILS');
+      binds$_ := par_ext_system_clean_details_;
+      IF NOT has_ext_system_clean_details_ THEN
+         Add_Result_Row___(result_key$_,
+                           binds$_ => binds$_,
+                           rec_ext_system_clean_header_ => rec_ext_system_clean_header_,
+                           row_no$_ => row_no$_);
+      END IF;
+
+      Xml_Record_Writer_SYS.End_Element(xml$_, 'EXT_SYSTEM_CLEAN_HEADER');
+   END LOOP;
+   CLOSE get_ext_system_clean_header;
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'HEADERS1');
+   binds$_ := par_ext_system_clean_header_;
+   IF NOT has_ext_system_clean_header_ THEN
+      Add_Result_Row___(result_key$_,
+                        binds$_ => binds$_,
+                        row_no$_ => row_no$_);
+   END IF;
+
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'EXT_SYSTEM_CLEAN_REP');
+   Report_SYS.Finish_Xml_Report('EXT_SYSTEM_CLEAN_REP', result_key$_, xml$_);
+   EXCEPTION
+      WHEN OTHERS THEN
+         IF get_ext_system_clean_header%ISOPEN THEN
+            CLOSE get_ext_system_clean_header;
+         END IF;
+         IF get_ext_system_clean_details%ISOPEN THEN
+            CLOSE get_ext_system_clean_details;
+         END IF;
+         RAISE;
+END Execute_Report;
+
+-----------------------------------------------------------------------------
+-------------------- FOUNDATION1 METHODS ------------------------------------
+-----------------------------------------------------------------------------
+-- Test
+--   Invokes the report method for testing purposes.
+-- Init
+--   Dummy procedure that can be called at database startup to ensure that
+--   this package is loaded into memory for performance reasons only.
+-----------------------------------------------------------------------------
+
+FUNCTION Test (
+   wo_no_                    IN NUMBER,
+   task_no_                  IN NUMBER)
+RETURN NUMBER
+IS
+   result_key_     NUMBER;
+   report_attr_    VARCHAR2(200);
+   parameter_attr_ VARCHAR2(32000);
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'EXT_SYSTEM_CLEAN_RPI', 'Test');
+   Report_SYS.Get_Result_Key__(result_key_);
+   Client_SYS.Add_To_Attr('RESULT_KEY', result_key_, report_attr_);
+   IF (wo_no_ IS NOT NULL) THEN
+      Client_SYS.Add_To_Attr('WO_NO', wo_no_, parameter_attr_);
+   END IF;
+   IF (task_no_ IS NOT NULL) THEN
+      Client_SYS.Add_To_Attr('TASK_NO', task_no_, parameter_attr_);
+   END IF;
+   Execute_Report(report_attr_, parameter_attr_);
+   RETURN result_key_;
+END Test;
+
+
+PROCEDURE Init
+IS
+BEGIN
+   NULL;
+END Init;
+
+END EXT_SYSTEM_CLEAN_RPI;
+/
+SHOW ERROR

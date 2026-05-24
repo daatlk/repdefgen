@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?report  module="WO" package="EXT_SYSTEM_CLEAN_REP" ?>
+<xs:schema
+   targetNamespace="urn:ifsworld-com:ext_system_clean_rep"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns="urn:ifsworld-com:ext_system_clean_rep"
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+   <xs:element name="EXT_SYSTEM_CLEAN_REP_REQUEST">
+      <xs:complexType>
+         <xs:all minOccurs="1" maxOccurs="1">
+            <xs:element name="PROCESSING_INFO">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="FORMATTING_OPTIONS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="COPIES" type="xs:int" nillable="true"/>
+                              <xs:element name="PAGE_FROM" type="xs:int" nillable="true"/>
+                              <xs:element name="PAGE_TO" type="xs:int" nillable="true"/>
+                              <xs:element name="LANG_CODE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="5"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LAYOUT_NAME" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PRINT_DIRECTORY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LAYOUT_FILE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="SELECTED_PRINTER" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LANGUAGE_LAYOUT_FILE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PAPER_FORMAT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="PROCESSING_ATTRIBUTES">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="EXECUTION_TIME" type="xs:dateTime"/>
+                              <xs:element name="ORDERED_BY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="JOB_ID" type="xs:int" nillable="true"/>
+                              <xs:element name="COMMENT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="ORDER_TIME" type="xs:dateTime"/>
+                              <xs:element name="REPORT_TITLE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PRINTED_BY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="CREATED" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="STANDARD_TRANSLATIONS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="ATTRIBUTE_DISPLAY_TEXTS">
+                                 <xs:complexType>
+                                    <xs:all minOccurs="1" maxOccurs="1">
+                                       <xs:element name="EXECUTION_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="ORDERED_BY" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="JOB_ID" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="COMMENT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="ORDER_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="REPORT_TITLE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="PRINTED_BY" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CURRENT_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CURRENT_DATE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="PAGE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="END_OF_REPORT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="REPORT_PARAMETERS" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="APPLICATION_TEXT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CREATED" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NONE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NOTES" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NO_DATA_FOUND" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                    </xs:all>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="SITE_TEXTS">
+                                 <xs:complexType>
+                                    <xs:all minOccurs="1" maxOccurs="1">
+                                       <xs:element name="COMPANY_NAME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_1" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_2" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_3" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_4" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_5" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_6" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_7" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_8" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_9" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_10" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                    </xs:all>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="EXT_SYSTEM_CLEAN_REP_DATA_ASSEMBLY_PARAMETERS">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="WO_NO">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="DISPLAY_TEXT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="TASK_NO">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="DISPLAY_TEXT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="EXT_SYSTEM_CLEAN_REP_ARCHIVE_VARIABLES">
+               <xs:complexType>
+                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="VARIABLE">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="NAME" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="EXT_SYSTEM_CLEAN_REP_TRANSLATIONS">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="REPORT_TEXTS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="EXT_SYSTEM_CLEAN" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="ATTRIBUTE_DISPLAY_TEXTS">
+                        <xs:complexType>
+                           <xs:choice minOccurs="0" maxOccurs="1">
+                              <xs:element name="HEADERS1" nillable="true" minOccurs="0">
+                                 <xs:complexType>
+                                    <xs:choice minOccurs="0" maxOccurs="1">
+                                       <xs:element name="EXT_SYSTEM_CLEAN_HEADER">
+                                          <xs:complexType>
+                                             <xs:choice minOccurs="0" maxOccurs="13">
+                                                <xs:element name="TASK_SEQ" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="WO_NO" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_NO" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_NAME" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_ADDRESS" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="START_DATE" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="START_TIME24H" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="START_TIME12H" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SIZE_OF_KITCHEN" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="INS_FINISHED_DATE" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="FREQ_OF_CLEANING" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="EXPIRY_DATE" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="EXT_DETAILS" nillable="true" minOccurs="0">
+                                                   <xs:complexType>
+                                                      <xs:choice minOccurs="0" maxOccurs="1">
+                                                         <xs:element name="EXT_SYSTEM_CLEAN_DETAILS">
+                                                            <xs:complexType>
+                                                               <xs:choice minOccurs="0" maxOccurs="29">
+                                                                  <xs:element name="WFTGM_CANOPY_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_BEFORE_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_BEFORE_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_DUCT1_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_BEFR_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_BEFR_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_FAN_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_BEFR_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_BEFR_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_DISCHARGE_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_BEFR_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_BEFR_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="TOTAL_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="MEAN_BEFORE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_CANOPY_AFTER" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_AFTER_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_AFTER_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_DUCT1_AFTER" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_AFTER_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_AFTER_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_FAN_AFTER" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_AFTER_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_AFTER_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="WFTGM_DISCHARGE_AFTER" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="COND_AFTER_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_AFTER_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="DESCRIPTION" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_OF_SCHEME_DIAGRAM" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="IMAGE_OF_WORK" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                               </xs:choice>
+                                                            </xs:complexType>
+                                                         </xs:element>
+                                                      </xs:choice>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:choice>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:choice>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:choice>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="EXT_SYSTEM_CLEAN_REP">
+               <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="1">
+                     <xs:element name="HEADERS1" nillable="true" minOccurs="0">
+                        <xs:complexType>
+                           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                              <xs:element name="EXT_SYSTEM_CLEAN_HEADER">
+                                 <xs:complexType>
+                                    <xs:choice minOccurs="0" maxOccurs="13">
+                                       <xs:element name="TASK_SEQ" type="xs:float" nillable="true" minOccurs="0"/>
+                                       <xs:element name="WO_NO" type="xs:float" nillable="true" minOccurs="0"/>
+                                       <xs:element name="CUSTOMER_NO" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="20"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CUSTOMER_NAME" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="4000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CUSTOMER_ADDRESS" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="2000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="START_DATE" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="10"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="START_TIME24H" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="8"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="START_TIME12H" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="11"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SIZE_OF_KITCHEN" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="4000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="INS_FINISHED_DATE" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="2000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="FREQ_OF_CLEANING" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="2000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="EXPIRY_DATE" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="2000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="EXT_DETAILS" nillable="true" minOccurs="0">
+                                          <xs:complexType>
+                                             <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                                <xs:element name="EXT_SYSTEM_CLEAN_DETAILS">
+                                                   <xs:complexType>
+                                                      <xs:choice minOccurs="0" maxOccurs="29">
+                                                         <xs:element name="WFTGM_CANOPY_BEFORE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_BEFORE_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_BEFORE_CLEAN_CNPY" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_DUCT1_BEFORE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_BEFR_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_BEFR_CLEAN_DUCT1" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_FAN_BEFORE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_BEFR_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_BEFR_CLEAN_FAN" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_DISCHARGE_BEFORE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_BEFR_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_BEFR_CLEAN_DISCHARGE" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="TOTAL_BEFORE" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="MEAN_BEFORE" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_CANOPY_AFTER" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_AFTER_CLEAN_CNPY" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_AFTER_CLEAN_CNPY" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_DUCT1_AFTER" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_AFTER_CLEAN_DUCT1" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_AFTER_CLEAN_DUCT1" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_FAN_AFTER" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_AFTER_CLEAN_FAN" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_AFTER_CLEAN_FAN" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="WFTGM_DISCHARGE_AFTER" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="COND_AFTER_CLEAN_DISCHARGE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="4000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_AFTER_CLEAN_DISCHARGE" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="DESCRIPTION" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="2000"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="IMAGE_OF_SCHEME_DIAGRAM" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="IMAGE_OF_WORK" type="xs:float" nillable="true" minOccurs="0"/>
+                                                      </xs:choice>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:sequence>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:choice>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:choice>
+               </xs:complexType>
+            </xs:element>
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>
