@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useDropzone, type FileRejection } from 'react-dropzone';
+import kaizensLogo from '../assets/kaizens-logo.webp';
 import { createSession, proposeFieldList, type SessionCreatedResponse } from '../api';
 
 interface Props {
@@ -50,9 +51,8 @@ export default function UploadStep({ onDone }: Props) {
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12">
       {/* Header */}
       <div className="mb-10 text-center">
-        <div className="inline-flex items-center gap-2 mb-3">
-          <span className="text-2xl">⚙️</span>
-          <span className="text-xl font-semibold text-slate-100 tracking-tight">RepDefGen</span>
+        <div className="inline-flex items-center justify-center mb-4">
+          <img src={kaizensLogo} alt="Kaizens" className="h-10 w-auto" />
         </div>
         <h1 className="text-4xl font-bold text-slate-100 tracking-tight">Generate IFS Report Definition</h1>
         <p className="mt-2 text-slate-400 text-base">Upload a Report Layout and let AI write the Report Definition Package.</p>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import kaizensLogo from '../assets/kaizens-logo.webp';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { applyCorrection, downloadUrl } from '../api';
@@ -53,8 +54,7 @@ export default function PreviewStep({ sessionId, files: initialFiles, onRestart 
       {/* Top bar */}
       <header className="flex items-center justify-between px-6 py-3 border-b border-slate-800 bg-slate-950/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-3">
-          <span className="text-lg">⚙️</span>
-          <span className="text-sm font-semibold text-slate-100">RepDefGen</span>
+          <img src={kaizensLogo} alt="Kaizens" className="h-7 w-auto" />
         </div>
         <button
           onClick={onRestart}

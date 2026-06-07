@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import kaizensLogo from '../assets/kaizens-logo.webp';
 import ReactMarkdown from 'react-markdown';
 import { correctFieldList, generateFiles, type SessionCreatedResponse } from '../api';
 
@@ -71,7 +72,7 @@ export default function ReviewStep({ sessionId, parsed, initialMessage, onGenera
       {/* Top bar */}
       <header className="flex items-center justify-between px-6 py-3 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
         <div className="flex items-center gap-3">
-          <span className="text-lg">⚙️</span>
+          <img src={kaizensLogo} alt="Kaizens" className="h-7 w-auto" />
           <div>
             <p className="text-sm font-semibold text-slate-100">{parsed.report_name}</p>
             <p className="text-xs text-slate-500">{parsed.report_title} · {parsed.blocks.length} block{parsed.blocks.length !== 1 ? 's' : ''}</p>
