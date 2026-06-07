@@ -71,18 +71,200 @@ def _load_sample_text(path: Path) -> str:
         return f"[sample file not found: {path}]"
 
 
-def _format_samples() -> str:
-    """Return all reference samples formatted as a labelled few-shot block."""
-    parts = []
-    for s in _SAMPLES:
-        rdf_text = _load_sample_text(s["rdf"])
-        report_text = _load_sample_text(s["report"])
-        parts.append(
-            f"=== Example: {s['label']} ===\n"
-            f"--- .rdf ---\n{rdf_text}\n"
-            f"--- .report ---\n{report_text}"
-        )
-    return "\n\n".join(parts)
+# ---------------------------------------------------------------------------
+# Structural skeletons — token-efficient boilerplate guides (~500 tokens each)
+# Full samples are available in sample/ but are NOT sent in prompts to stay
+# within API rate limits. These skeletons capture every required pattern.
+# ---------------------------------------------------------------------------
+
+_RDF_SKELETON = """\
+-- ═══ .rdf STRUCTURAL SKELETON ═══
+-- Naming: <BASE>_REP (view), <BASE>_RPT (table), <BASE>_RPI (package)
+
+PACKAGE <BASE>_RPI IS
+  TYPE binds$ IS RECORD (
+    -- ALL cursor params across ALL blocks (report params + inter-block linking fields)
+    param1_  VARCHAR2(50),
+    param2_  NUMBER,
+    linking_ VARCHAR2(12)   -- e.g. QUOTATION_REV passed from header to detail cursor
+  );
+  PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2);
+  FUNCTION  Test(p1_ IN VARCHAR2, p2_ IN NUMBER) RETURN VARCHAR2;
+  PROCEDURE Init;
+END <BASE>_RPI;
+
+-- RPT table (one Database_SYS.Set_Table_Column call per column):
+Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY',    'NUMBER(10)',     'N', 'Y');
+Database_SYS.Set_Table_Column(columns_, 'ROW_NO',        'NUMBER(10)',     'N', 'Y');
+Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER(10)',     'N', 'Y');
+Database_SYS.Set_Table_Column(columns_, 'ROWVERSION',    'DATE',           'N', 'Y');
+Database_SYS.Set_Table_Column(columns_, 'FIELD_NAME',    'VARCHAR2(100)',  'Y', 'N');
+-- ... one line per field ...
+Database_SYS.Create_Or_Replace_Table('<BASE>_RPT', columns_, '&IFSAPP_DATA', NULL, TRUE);
+
+-- Column comments (FLAGS: A=Always shown, Q=Query prompt, M=Mandatory):
+COMMENT ON COLUMN <BASE>_RPT.FIELD_NAME IS
+   'FLAGS=A----^DATATYPE=STRING(100)^TITLE=Field Label^QUERY=:^';
+
+-- REP view:
+CREATE OR REPLACE VIEW <BASE>_REP AS
+   SELECT * FROM <BASE>_RPT WHERE allowed_report = 'TRUE'
+   WITH READ ONLY;
+
+-- Registration:
+Report_SYS.Define_Report_('<BASE>_REP', '<MODULE>', '<LU>', '<Title>',
+                          '<BASE>_RPT', '<BASE>_RPI.Execute_Report', 0);
+Report_SYS.Define_Report_Text_('<BASE>_REP', '<TEXT_KEY>', 'Sample');
+
+-- Package body:
+PACKAGE BODY <BASE>_RPI IS
+  PROCEDURE Add_Result_Row___(result_key_ NUMBER, row_no_ IN OUT NUMBER,
+                              parent_row_no_ NUMBER, rec_ <BASE>_RPT%ROWTYPE) IS
+  BEGIN
+    General_SYS.Init_Method('<BASE>_RPI', NULL, 'Add_Result_Row___', TRUE);
+    INSERT INTO <BASE>_RPT VALUES rec_;
+    row_no_ := row_no_ + 1;
+  END Add_Result_Row___;
+
+  PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2) IS
+    binds_   binds$;
+    xml_     CLOB;
+    header_  <BASE>_RPT%ROWTYPE;
+    detail_  <BASE>_RPT%ROWTYPE;
+    row_no_  NUMBER := 1;
+    CURSOR get_header(p1_ VARCHAR2, p2_ NUMBER) IS
+       SELECT ... FROM <view1>, <view2> WHERE ...;
+    CURSOR get_detail(p1_ VARCHAR2, link_ VARCHAR2, p2_ NUMBER) IS
+       SELECT ... FROM <view3> WHERE ...;
+  BEGIN
+    General_SYS.Init_Method('<BASE>_RPI', NULL, 'Execute_Report');
+    -- bind parameters from parameter_attr_
+    Client_SYS.Add_To_Attr('PARAM1', binds_.param1_, parameter_attr_);
+    Report_SYS.Start_Xml_Report(xml_, '<BASE>_REP');
+    FOR h IN get_header(binds_.param1_, binds_.param2_) LOOP
+      header_.result_key    := Report_SYS.Get_Result_Key;
+      header_.row_no        := row_no_;
+      header_.parent_row_no := 0;
+      header_.FIELD_NAME    := h.field_name;
+      -- populate all header fields ...
+      Xml_Record_Writer_SYS.Start_Element(xml_, 'HEADERS1');
+      Xml_Record_Writer_SYS.Add_Element(xml_, 'FIELD_NAME', h.field_name);
+      -- link field for detail cursor:
+      binds_.linking_ := h.linking_field;
+      FOR d IN get_detail(binds_.param1_, binds_.linking_, binds_.param2_) LOOP
+        detail_.result_key    := Report_SYS.Get_Result_Key;
+        detail_.row_no        := row_no_;
+        detail_.parent_row_no := header_.row_no;
+        detail_.DETAIL_FIELD  := d.detail_field;
+        Add_Result_Row___(detail_.result_key, row_no_, header_.row_no, detail_);
+        Xml_Record_Writer_SYS.Start_Element(xml_, 'DETAILS1');
+        Xml_Record_Writer_SYS.Add_Element(xml_, 'DETAIL_FIELD', d.detail_field);
+        Xml_Record_Writer_SYS.End_Element(xml_, 'DETAILS1');
+      END LOOP;
+      Add_Result_Row___(header_.result_key, row_no_, 0, header_);
+      Xml_Record_Writer_SYS.End_Element(xml_, 'HEADERS1');
+    END LOOP;
+    Report_SYS.Finish_Xml_Report(xml_, result_key_);
+  END Execute_Report;
+END <BASE>_RPI;"""
+
+_REPORT_SKELETON = """\
+-- ═══ .report STRUCTURAL SKELETON ═══
+-- Block names: PascalCase  (e.g. <LU>Header, <LU>Detail)
+-- Attribute names: PascalCase matching SCREAMING_SNAKE RPT columns
+-- Aggregate names match XPath tokens in the .rdl
+
+<?xml version="1.0" encoding="UTF-8"?>
+<REPORT xmlns="urn:ifsworld-com:schemas:report_report">
+  <CODE_GENERATION_PROPERTIES>
+    <CODE_GENERATION_PROPERTIES><TITLE_TEXT>Report Title</TITLE_TEXT></CODE_GENERATION_PROPERTIES>
+  </CODE_GENERATION_PROPERTIES>
+  <DIAGRAMS>
+    <DIAGRAM><NAME>Main</NAME><DIAGRAM_TYPE>REPORT_STRUCTURE</DIAGRAM_TYPE>
+      <NODES>
+        <DIAGRAM_NODE><NODE_TYPE>REPORT</NODE_TYPE>...</DIAGRAM_NODE>
+        <DIAGRAM_NODE><NODE_TYPE>REPORT_BLOCK</NODE_TYPE>...</DIAGRAM_NODE>
+      </NODES>
+      <EDGES>
+        <!-- AGGREGATE edge from parent block to child block: -->
+        <DIAGRAM_EDGE><EDGE_TYPE>AGGREGATE</EDGE_TYPE>
+          <PROPERTIES>
+            <PROPERTY><NAME>Name</NAME><VALUE>AggName</VALUE></PROPERTY>
+            <PROPERTY><NAME>IsArray</NAME><VALUE>true</VALUE></PROPERTY>
+            <PROPERTY><NAME>PassedParameters</NAME>
+              <VALUE>ParamName1,ParamName2</VALUE></PROPERTY>
+          </PROPERTIES>
+        </DIAGRAM_EDGE>
+      </EDGES>
+    </DIAGRAM>
+  </DIAGRAMS>
+  <BLOCKS>
+    <BLOCK>
+      <NAME><LU>Header</NAME>
+      <CURSOR>SELECT h.col1, h.col2, h.linking_col FROM view1 h JOIN view2 v ON ... WHERE h.param1 = :param1 AND h.param2 = :param2</CURSOR>
+      <PARAMETERS>
+        <PARAMETER><NAME>Param1</NAME><DATA_TYPE_DB>VARCHAR2</DATA_TYPE_DB></PARAMETER>
+        <PARAMETER><NAME>Param2</NAME><DATA_TYPE_DB>NUMBER</DATA_TYPE_DB></PARAMETER>
+      </PARAMETERS>
+      <ATTRIBUTES>
+        <ATTRIBUTE><NAME>FieldName</NAME><DATA_TYPE>TEXT</DATA_TYPE><LENGTH>50</LENGTH></ATTRIBUTE>
+        <!-- linking field (hidden, passed to child): -->
+        <ATTRIBUTE><NAME>LinkingField</NAME><DATA_TYPE>TEXT</DATA_TYPE><LENGTH>12</LENGTH></ATTRIBUTE>
+      </ATTRIBUTES>
+      <AGGREGATES>
+        <AGGREGATE>
+          <NAME>Details1</NAME><BLOCK><LU>Detail</BLOCK>
+          <IS_ARRAY>true</IS_ARRAY>
+          <PARAMETERS>
+            <PARAMETER><NAME>Param1</NAME></PARAMETER>
+            <PARAMETER><NAME>LinkingField</NAME></PARAMETER><!-- passed from parent row -->
+            <PARAMETER><NAME>Param2</NAME></PARAMETER>
+          </PARAMETERS>
+        </AGGREGATE>
+      </AGGREGATES>
+    </BLOCK>
+    <BLOCK>
+      <NAME><LU>Detail</NAME>
+      <CURSOR>SELECT d.col1, d.col2 FROM view3 d WHERE d.param1 = :param1 AND d.linking = :linkingField AND d.param2 = :param2</CURSOR>
+      <PARAMETERS>
+        <PARAMETER><NAME>Param1</NAME><DATA_TYPE_DB>VARCHAR2</DATA_TYPE_DB></PARAMETER>
+        <PARAMETER><NAME>LinkingField</NAME><DATA_TYPE_DB>VARCHAR2</DATA_TYPE_DB></PARAMETER>
+        <PARAMETER><NAME>Param2</NAME><DATA_TYPE_DB>NUMBER</DATA_TYPE_DB></PARAMETER>
+      </PARAMETERS>
+      <ATTRIBUTES>
+        <ATTRIBUTE><NAME>DetailField</NAME><DATA_TYPE>TEXT</DATA_TYPE><LENGTH>200</LENGTH></ATTRIBUTE>
+      </ATTRIBUTES>
+    </BLOCK>
+  </BLOCKS>
+  <PARAMETERS><!-- report-level parameters (top-level only, not inter-block) -->
+    <PARAMETER><NAME>Param1</NAME><DATA_TYPE>TEXT</DATA_TYPE><OPTIONAL>true</OPTIONAL></PARAMETER>
+    <PARAMETER><NAME>Param2</NAME><DATA_TYPE>NUMBER</DATA_TYPE><OPTIONAL>true</OPTIONAL></PARAMETER>
+  </PARAMETERS>
+  <AGGREGATES><!-- top-level aggregate from report root to header block -->
+    <AGGREGATE><NAME>Headers1</NAME><BLOCK><LU>Header</BLOCK><IS_ARRAY>true</IS_ARRAY>
+      <PARAMETERS>
+        <PARAMETER><NAME>Param1</NAME></PARAMETER>
+        <PARAMETER><NAME>Param2</NAME></PARAMETER>
+      </PARAMETERS>
+    </AGGREGATE>
+  </AGGREGATES>
+  <REPORT_TEXTS>
+    <REPORT_TEXT><NAME>TEXT_KEY</NAME><VALUE>Sample</VALUE></REPORT_TEXT>
+  </REPORT_TEXTS>
+  <COMPONENT><MODULE></COMPONENT>
+  <LU_NAME><LU></LU_NAME>
+  <TITLE>Report Title</TITLE>
+</REPORT>"""
+
+
+def _format_structural_guide() -> str:
+    """Return compact structural skeletons (~500 tokens) instead of full samples."""
+    return (
+        "=== IFS .rdf STRUCTURAL SKELETON (follow every boilerplate pattern) ===\n"
+        + _RDF_SKELETON
+        + "\n\n=== IFS .report STRUCTURAL SKELETON ===\n"
+        + _REPORT_SKELETON
+    )
 
 
 def _format_block_tree(block, indent: int = 0) -> str:
@@ -120,8 +302,8 @@ def propose_field_list(
 ) -> str:
     """Ask Claude to propose the complete Field List for all blocks."""
     block_summary = _format_block_tree(parsed_rdl.root_block)
-    codebase_context = _format_chunks(chunks)
-    samples = _format_samples()
+    codebase_context = _format_chunks(chunks[:5])  # cap at 5 chunks to stay under rate limit
+    guide = _format_structural_guide()
 
     prompt = f"""I need to generate an IFS Report Definition Package for this report.
 
@@ -134,8 +316,8 @@ BLOCK STRUCTURE AND VISIBLE FIELDS (from the .rdl layout):
 RELEVANT CODEBASE CONTEXT (views and APIs from the IFS Build Home):
 {codebase_context}
 
-REFERENCE EXAMPLES (study both carefully before proposing):
-{samples}
+STRUCTURAL PATTERNS TO FOLLOW:
+{guide}
 
 Based on the block structure, visible fields, and codebase context, propose the complete Field List for this report.
 
@@ -169,8 +351,8 @@ def generate_files(
     Generate the .rdf and .report files from the confirmed Field List.
     Returns dict of filename -> written Path.
     """
-    codebase_context = _format_chunks(chunks)
-    samples = _format_samples()
+    codebase_context = _format_chunks(chunks[:5])  # cap at 5 chunks to stay under rate limit
+    guide = _format_structural_guide()
     rdf_name = f"{meta.report_name}.rdf"
     report_name = f"{meta.report_name}.report"
 
@@ -198,8 +380,8 @@ BLOCK STRUCTURE:
 RELEVANT CODEBASE CONTEXT:
 {codebase_context}
 
-REFERENCE EXAMPLES (follow their structural patterns exactly):
-{samples}
+STRUCTURAL PATTERNS TO FOLLOW:
+{guide}
 
 Generate BOTH files:
 
