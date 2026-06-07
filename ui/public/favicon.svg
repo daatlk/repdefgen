@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Top bar — dark purple, full width -->
+  <!-- Top bar — dark purple, full width, right-aligned -->
   <rect x="2" y="3" width="28" height="8" rx="4" fill="#8B00FF"/>
-  <!-- Middle bar — medium purple, shorter -->
-  <rect x="2" y="13" width="20" height="8" rx="4" fill="#9B59D0"/>
-  <!-- Bottom bar — light lavender, shortest -->
-  <rect x="2" y="23" width="13" height="8" rx="4" fill="#C8A0E8"/>
+  <!-- Middle bar — medium purple, right-aligned -->
+  <rect x="10" y="13" width="20" height="8" rx="4" fill="#9B59D0"/>
+  <!-- Bottom bar — light lavender, right-aligned -->
+  <rect x="17" y="23" width="13" height="8" rx="4" fill="#C8A0E8"/>
 </svg>
