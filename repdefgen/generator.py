@@ -9,15 +9,46 @@ from repdefgen.session import Session
 
 # Paths to few-shot example files (relative to this file's package root)
 _HERE = Path(__file__).parent.parent
-SAMPLE_RDF = _HERE / "sample/wo/source/wo/database/ExtSystemClean.rdf"
-SAMPLE_REPORT = _HERE / "sample/wo/model/wo/ExtSystemClean.report"
+
+_SAMPLES = [
+    {
+        "label": "ExtSystemClean (WO module — 2 nested blocks, survey pivot cursors)",
+        "rdf":    _HERE / "sample/wo/source/wo/database/ExtSystemClean.rdf",
+        "report": _HERE / "sample/wo/model/wo/ExtSystemClean.report",
+    },
+    {
+        "label": "JobQuote (SRVQUO module — 2 nested blocks, inter-block parameter passing)",
+        "rdf":    _HERE / "sample/srvquo/source/srvquo/database/JobQuote.rdf",
+        "report": _HERE / "sample/srvquo/model/srvquo/JobQuote.report",
+    },
+]
 
 SYSTEM_PROMPT = (
     "You are an IFS PL/SQL developer. Generate IFS Report Definition Packages following "
     "exactly the structural patterns in the provided examples. "
-    "Preserve all boilerplate patterns (RPT table DDL, REP view, report registration, "
-    "Execute_Report loop structure, Add_Result_Row___ procedure, binds$ record, "
-    "Xml_Record_Writer_SYS calls, General_SYS.Init_Method calls). "
+    "Preserve all boilerplate patterns exactly:\n"
+    "  - RPT table created via Database_SYS.Set_Table_Column calls\n"
+    "  - REP view selecting from RPT with allowed_report filter\n"
+    "  - Report_SYS.Define_Report_ registration (report name, module, LU, title, RPT table, package.Execute_Report)\n"
+    "  - Report_SYS.Define_Report_Text_ registration (report name, text key, 'Sample')\n"
+    "  - binds$ record in package spec — includes ALL cursor parameters across ALL blocks "
+    "(not just top-level report parameters; child block parameters passed from parent rows belong here too)\n"
+    "  - Add_Result_Row___ inserting one row into the RPT table\n"
+    "  - Execute_Report driving nested cursor loops and writing XML via Xml_Record_Writer_SYS\n"
+    "  - General_SYS.Init_Method calls in every procedure/function\n"
+    "Naming conventions (critical — follow exactly):\n"
+    "  - Package spec/body: <REPORT_NAME with _REP replaced by _RPI>  (e.g. JOB_QUOTE_REP → JOB_QUOTE_RPI)\n"
+    "  - RPT table: <REPORT_NAME with _REP replaced by _RPT>  (e.g. JOB_QUOTE_REP → JOB_QUOTE_RPT)\n"
+    "  - REP view: same as report name  (e.g. JOB_QUOTE_REP)\n"
+    "  - .report block names: PascalCase of LU name + block role  (e.g. JobQuoteHeader, JobQuoteDetail)\n"
+    "  - .report attributes: PascalCase  (e.g. QuotationNo, WqDateCreated)\n"
+    "  - .rdf RPT columns: SCREAMING_SNAKE_CASE  (e.g. QUOTATION_NO, WQ_DATE_CREATED)\n"
+    "Inter-block parameter passing (key pattern from JobQuote sample):\n"
+    "  - Fields fetched in the parent cursor that are used as parameters in a child cursor "
+    "must appear in the parent block's attribute list AND the child cursor's parameter list.\n"
+    "  - These 'linking fields' (e.g. QUOTATION_REV) are often invisible in the layout but "
+    "essential for correct SQL — identify them from the codebase context.\n"
+    "  - They must also appear in the binds$ record.\n"
     "Output files delimited by exactly these markers (one per line):\n"
     "  --- BEGIN <filename> ---\n"
     "  <file content>\n"
@@ -38,6 +69,20 @@ def _load_sample_text(path: Path) -> str:
         return path.read_text(encoding="utf-8")
     except FileNotFoundError:
         return f"[sample file not found: {path}]"
+
+
+def _format_samples() -> str:
+    """Return all reference samples formatted as a labelled few-shot block."""
+    parts = []
+    for s in _SAMPLES:
+        rdf_text = _load_sample_text(s["rdf"])
+        report_text = _load_sample_text(s["report"])
+        parts.append(
+            f"=== Example: {s['label']} ===\n"
+            f"--- .rdf ---\n{rdf_text}\n"
+            f"--- .report ---\n{report_text}"
+        )
+    return "\n\n".join(parts)
 
 
 def _format_block_tree(block, indent: int = 0) -> str:
@@ -76,8 +121,7 @@ def propose_field_list(
     """Ask Claude to propose the complete Field List for all blocks."""
     block_summary = _format_block_tree(parsed_rdl.root_block)
     codebase_context = _format_chunks(chunks)
-    sample_rdf = _load_sample_text(SAMPLE_RDF)
-    sample_report = _load_sample_text(SAMPLE_REPORT)
+    samples = _format_samples()
 
     prompt = f"""I need to generate an IFS Report Definition Package for this report.
 
@@ -90,20 +134,25 @@ BLOCK STRUCTURE AND VISIBLE FIELDS (from the .rdl layout):
 RELEVANT CODEBASE CONTEXT (views and APIs from the IFS Build Home):
 {codebase_context}
 
-REFERENCE EXAMPLES:
-=== Sample .rdf ===
-{sample_rdf}
+REFERENCE EXAMPLES (study both carefully before proposing):
+{samples}
 
-=== Sample .report ===
-{sample_report}
+Based on the block structure, visible fields, and codebase context, propose the complete Field List for this report.
 
-Based on the block structure, visible fields, and codebase context, propose the complete Field List for this report. Include:
-1. All visible fields from the .rdl (already listed above)
-2. Any hidden/linking fields likely needed (e.g. primary keys, foreign keys used in JOINs)
-3. Report Parameters (the filter inputs the user passes when running the report)
-4. Inferred SQL data types and lengths for each field
+For EACH BLOCK include:
+1. All visible fields from the .rdl (already listed above) with inferred SQL data types and lengths
+2. Hidden/linking fields likely needed — primary keys, foreign keys used in JOINs, and especially
+   any fields that must be fetched in a PARENT block and passed as parameters to a CHILD block cursor
+   (e.g. a revision number or secondary key that is not shown in the layout but is required for the
+   detail cursor WHERE clause — see JobQuote.rdf where QUOTATION_REV flows from header to detail)
+3. Mark each hidden field clearly as [HIDDEN — reason]
 
-Format your response as a structured list per block, then list the Report Parameters separately. Be explicit about what you are inferring vs. what you see directly in the layout."""
+Then list separately:
+4. Report Parameters — the top-level filter inputs the developer passes when running the report
+   (these appear in the binds$ record and the Execute_Report parameter_attr_ binding)
+5. All binds$ fields — includes BOTH report parameters AND any inter-block linking fields
+
+Format as a structured list per block. Be explicit about what you see in the layout vs. what you are inferring from the codebase."""
 
     return session.send(prompt, max_tokens=4096)
 
@@ -121,16 +170,24 @@ def generate_files(
     Returns dict of filename -> written Path.
     """
     codebase_context = _format_chunks(chunks)
+    samples = _format_samples()
     rdf_name = f"{meta.report_name}.rdf"
     report_name = f"{meta.report_name}.report"
+
+    # Derive conventional names from report_name (e.g. JOB_QUOTE_REP)
+    base = meta.report_name[:-4] if meta.report_name.endswith("_REP") else meta.report_name
+    pkg_name = f"{base}_RPI"
+    tbl_name = f"{base}_RPT"
 
     prompt = f"""Now generate the complete IFS Report Definition Package files.
 
 REPORT METADATA:
-- Report name: {meta.report_name}
-- LU name: {meta.lu_name}
-- Module: {meta.module}
-- Title: {meta.title}
+- Report name (REP view): {meta.report_name}
+- Package name (RPI):     {pkg_name}
+- Table name (RPT):       {tbl_name}
+- LU name:                {meta.lu_name}
+- Module:                 {meta.module}
+- Title:                  {meta.title}
 
 CONFIRMED FIELD LIST:
 {field_list}
@@ -141,14 +198,23 @@ BLOCK STRUCTURE:
 RELEVANT CODEBASE CONTEXT:
 {codebase_context}
 
-Generate BOTH files following the exact structural patterns of the provided examples:
+REFERENCE EXAMPLES (follow their structural patterns exactly):
+{samples}
 
-1. {rdf_name} — the complete PL/SQL Report Definition Package (.rdf)
-2. {report_name} — the IFS Report Model XML (.report)
+Generate BOTH files:
 
-Use the CONFIRMED FIELD LIST above for all attributes, parameters, and cursor SQL.
-Generate realistic cursor SQL by referencing the views and APIs shown in the codebase context.
-Do NOT truncate. Write every file completely.
+1. {rdf_name} — the complete PL/SQL Report Definition Package
+   - binds$ record must include ALL cursor parameters across ALL blocks
+     (report parameters + any inter-block linking fields from the field list)
+   - cursor SQL must reference the views/APIs shown in the codebase context
+   - RPT table columns and REP view columns must be SCREAMING_SNAKE_CASE
+   - Do NOT truncate — write every BEGIN/END/PROCEDURE block completely
+
+2. {report_name} — the IFS Report Model XML
+   - Block names: PascalCase of LU + role (e.g. {meta.lu_name}Header, {meta.lu_name}Detail)
+   - Attribute names: PascalCase (e.g. QuotationNo maps to column QUOTATION_NO)
+   - Include aggregate edges with correct isArray=true and parameter passing between blocks
+   - Report-level parameters match the top-level report parameters from the field list
 
 Delimit each file with:
 --- BEGIN <filename> ---
