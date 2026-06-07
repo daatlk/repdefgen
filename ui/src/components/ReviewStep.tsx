@@ -164,7 +164,7 @@ export default function ReviewStep({ sessionId, parsed, initialMessage, onGenera
             {generating ? (
               <span className="flex items-center gap-2"><Spinner />Generating…</span>
             ) : (
-              'Generate RDF ▶'
+              'Generate IFS Report Definition ▶'
             )}
           </button>
         </div>
