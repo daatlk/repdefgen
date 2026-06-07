@@ -1,5 +1,6 @@
 """Index an IFS Build Home into a local ChromaDB vector store."""
 
+import os
 import re
 from pathlib import Path
 
@@ -95,7 +96,13 @@ def build_index(build_home: Path, index_dir: Path) -> tuple[int, int]:
     )
 
     extensions = {".api", ".apy", ".view"}
-    files = [p for p in build_home.rglob("*") if p.suffix.lower() in extensions]
+    # os.walk with followlinks=True handles symlinked subdirectories; rglob does not.
+    files = [
+        Path(root) / fname
+        for root, _dirs, fnames in os.walk(build_home, followlinks=True)
+        for fname in fnames
+        if Path(fname).suffix.lower() in extensions
+    ]
 
     all_chunks: list[dict] = []
     file_count = 0
