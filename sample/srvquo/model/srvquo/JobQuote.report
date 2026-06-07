@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<REPORT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:ifsworld-com:schemas:report_report">
+   <CODE_GENERATION_PROPERTIES>
+      <CODE_GENERATION_PROPERTIES>
+      </CODE_GENERATION_PROPERTIES>
+   </CODE_GENERATION_PROPERTIES>
+   <DIAGRAMS>
+      <DIAGRAM>
+         <NAME>Main</NAME>
+         <DIAGRAM_TYPE>REPORT_STRUCTURE</DIAGRAM_TYPE>
+         <NODES>
+            <DIAGRAM_NODE>
+               <ID>e4b6e590-ec91-11f0-354f-8239d364e67d</ID>
+               <NODE_TYPE>REPORT_BLOCK</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockName</NAME>
+                     <VALUE>JobQuoteDetail</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>673</X>
+                     <Y>177</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>153</X>
+                     <Y>185</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+            <DIAGRAM_NODE>
+               <ID>620ddea0-eba6-11f0-354f-8239d364e67d</ID>
+               <NODE_TYPE>REPORT_BLOCK</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockName</NAME>
+                     <VALUE>JobQuoteHeader</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>295</X>
+                     <Y>75</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>173</X>
+                     <Y>413</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+            <DIAGRAM_NODE>
+               <ID>9b21e8a0-eba4-11f0-354f-8239d364e67d</ID>
+               <NODE_TYPE>REPORT</NODE_TYPE>
+               <MINIMIZED>0</MINIMIZED>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>EntityName</NAME>
+                     <VALUE>JobQuote</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>LUName</NAME>
+                     <VALUE>JobQuote</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <LOCATION>
+                  <POINT>
+                     <X>47</X>
+                     <Y>50</Y>
+                  </POINT>
+               </LOCATION>
+               <SIZE>
+                  <POINT>
+                     <X>129</X>
+                     <Y>76</Y>
+                  </POINT>
+               </SIZE>
+            </DIAGRAM_NODE>
+         </NODES>
+         <EDGES>
+            <DIAGRAM_EDGE>
+               <EDGE_TYPE>AGGREGATE</EDGE_TYPE>
+               <SOURCE_NODE_ID>620ddea0-eba6-11f0-354f-8239d364e67d</SOURCE_NODE_ID>
+               <TARGET_NODE_ID>e4b6e590-ec91-11f0-354f-8239d364e67d</TARGET_NODE_ID>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockEdgeName</NAME>
+                     <VALUE>Details1</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>IsArray</NAME>
+                     <VALUE>true</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>BlockName</NAME>
+                     <VALUE>JobQuoteDetail</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <CONTROL_POINTS>
+                  <POINT>
+                     <X>467</X>
+                     <Y>277</Y>
+                  </POINT>
+                  <POINT>
+                     <X>672</X>
+                     <Y>270</Y>
+                  </POINT>
+               </CONTROL_POINTS>
+            </DIAGRAM_EDGE>
+            <DIAGRAM_EDGE>
+               <EDGE_TYPE>AGGREGATE</EDGE_TYPE>
+               <SOURCE_NODE_ID>9b21e8a0-eba4-11f0-354f-8239d364e67d</SOURCE_NODE_ID>
+               <TARGET_NODE_ID>620ddea0-eba6-11f0-354f-8239d364e67d</TARGET_NODE_ID>
+               <IS_MERGED>0</IS_MERGED>
+               <PROPERTIES>
+                  <PROPERTY>
+                     <NAME>ReportBlockEdgeName</NAME>
+                     <VALUE>Headers1</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>IsArray</NAME>
+                     <VALUE>true</VALUE>
+                  </PROPERTY>
+                  <PROPERTY>
+                     <NAME>BlockName</NAME>
+                     <VALUE>JobQuoteHeader</VALUE>
+                  </PROPERTY>
+               </PROPERTIES>
+               <CONTROL_POINTS>
+                  <POINT>
+                     <X>163</X>
+                     <Y>125</Y>
+                  </POINT>
+                  <POINT>
+                     <X>294</X>
+                     <Y>218</Y>
+                  </POINT>
+               </CONTROL_POINTS>
+            </DIAGRAM_EDGE>
+         </EDGES>
+      </DIAGRAM>
+   </DIAGRAMS>
+   <NAME>JobQuote</NAME>
+   <COMPONENT>SRVQUO</COMPONENT>
+   <LU_NAME>JobQuote</LU_NAME>
+   <BLOCKS>
+      <BLOCK>
+         <NAME>JobQuoteHeader</NAME>
+         <CURSOR_DEFINITION>select  wq.QUOTATION_NO,
+        wq.DATE_CREATED WQ_DATE_CREATED,
+        sq.DT_CRE SQ_DATE_CREATED,
+        wq.CREATED_BY as WQ_CREATED_BY,
+        sq.USER_CREATED AS SQ_USER_CREATED,
+        sq.CUSTOMER_REFERENCE,
+        NVL(wq.wo_no, wq.wo_quo_no) as WO_NO,
+        sq.CUSTOMER_ID,
+        csa.address as customer_address,
+        (customer_info_api.Get_Name(sq.CUSTOMER_ID)) AS customer_name,
+        ceq.CF$_QR_CODE as Service_Asset_Tag,
+        ceq.MCH_NAME as Asset_Description,
+        ceq.SERIAL_NO,
+        ceq.OBJECT_NO as System_Asset_ID,
+        wq.QUOTATION_REV,
+        null as test,
+        Service_Quotation_Address_API.Get_Formatted_Address(sq.quotation_no,
+                                                                 sq.quotation_rev,
+                                                                 &apos;VISIT&apos;) as site_address,
+        SUM(st.total_cost) as current_spend
+ 
+   from WO_SRV_QUO wq
+   LEFT JOIN service_quotation sq
+     on wq.quotation_no = sq. quotation_no
+   left join (SELECT a.Address, a.Address_Id, a.Customer_Id, t.Def_Address
+                from CUSTOMER_INFO_ADDRESS a
+                LEFT OUTER JOIN CUSTOMER_INFO_ADDRESS_TYPE t
+                  ON a.Customer_Id = t.Customer_Id
+                 and a.Address_Id = t.Address_Id
+               WHERE t.Def_Address = &apos;TRUE&apos;
+                 AND t.Address_Type_Code = &apos;Document&apos;) csa
+     on sq.customer_id = csa.customer_id
+   left join EQUIPMENT_OBJECT_UIV_CFV ceq
+     on wq.Mch_Code = ceq.Mch_Code
+    AND wq.MCH_CODE_CONTRACT = ceq.Contract
+  left join SERVICE_QUOTATION_TOTALS_UIV st on sq.quotation_no = st.quotation_no AND sq.quotation_rev = st.quotation_rev 
+  where wq.QUOTATION_NO = quotation_no_
+    and NVL(wq.wo_no, wq.wo_quo_no) = wo_no_
+  GROUP BY
+        wq.QUOTATION_NO,
+        wq.DATE_CREATED,
+        sq.DT_CRE,
+        wq.CREATED_BY,
+        sq.USER_CREATED,
+        sq.CUSTOMER_REFERENCE,
+        NVL(wq.wo_no, wq.wo_quo_no),
+        sq.CUSTOMER_ID,
+        csa.address,
+        ceq.CF$_QR_CODE,
+        ceq.MCH_NAME,
+        ceq.SERIAL_NO,
+        ceq.OBJECT_NO,
+        wq.QUOTATION_REV,
+        Service_Quotation_Address_API.Get_Formatted_Address(
+            sq.quotation_no,
+            sq.quotation_rev,
+            &apos;VISIT&apos;
+        )</CURSOR_DEFINITION>
+         <PARAMETERS>
+            <BLOCK_PARAMETER>
+               <NAME>QuotationNo</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+            <BLOCK_PARAMETER>
+               <NAME>WoNo</NAME>
+               <DB_DATATYPE>NUMBER</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+         </PARAMETERS>
+         <ATTRIBUTES>
+            <ATTRIBUTE>
+               <NAME>QuotationNo</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>12</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WqDateCreated</NAME>
+               <DATATYPE>TIMESTAMP</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SqDateCreated</NAME>
+               <DATATYPE>TIMESTAMP</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WqCreatedBy</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>30</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SqUserCreated</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>30</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerReference</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>100</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>WoNo</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerId</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>20</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerAddress</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>2000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CustomerName</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>ServiceAssetTag</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>4000</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>AssetDescription</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>200</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SerialNo</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>50</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SystemAssetId</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>10</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>QuotationRev</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>SiteAddress</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>400</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>CurrentSpend</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+         </ATTRIBUTES>
+         <AGGREGATES>
+            <AGGREGATE>
+               <NAME>Details1</NAME>
+               <IS_ARRAY>1</IS_ARRAY>
+               <BLOCK>JobQuoteDetail</BLOCK>
+               <ATTRIBUTES>
+                  <AGGREGATE_ATTRIBUTE>
+                     <NAME>QuotationNo</NAME>
+                  </AGGREGATE_ATTRIBUTE>
+                  <AGGREGATE_ATTRIBUTE>
+                     <NAME>QuotationRev</NAME>
+                  </AGGREGATE_ATTRIBUTE>
+                  <AGGREGATE_ATTRIBUTE>
+                     <NAME>WoNo</NAME>
+                  </AGGREGATE_ATTRIBUTE>
+               </ATTRIBUTES>
+            </AGGREGATE>
+         </AGGREGATES>
+      </BLOCK>
+      <BLOCK>
+         <NAME>JobQuoteDetail</NAME>
+         <CURSOR_DEFINITION>select wp.CATALOG_DESCRIPTION as detail, wp.PLANNED_QTY as quantity,wp.PRICE_SOURCE_ID as price,wp.SALES_PRICE_CURR as value
+from WO_PLAN_SRV_QUO wp
+where wp.QUOTATION_NO = quotation_no_ and wp.QUOTATION_REV=quotation_rev_ and wp.WO_QUO_NO=wo_no_</CURSOR_DEFINITION>
+         <PARAMETERS>
+            <BLOCK_PARAMETER>
+               <NAME>QuotationNo</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+            <BLOCK_PARAMETER>
+               <NAME>QuotationRev</NAME>
+               <DB_DATATYPE>VARCHAR2</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+            <BLOCK_PARAMETER>
+               <NAME>WoNo</NAME>
+               <DB_DATATYPE>NUMBER</DB_DATATYPE>
+            </BLOCK_PARAMETER>
+         </PARAMETERS>
+         <ATTRIBUTES>
+            <ATTRIBUTE>
+               <NAME>Detail</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>200</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>Quantity</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>Price</NAME>
+               <DATATYPE>TEXT</DATATYPE>
+               <LENGTH>10</LENGTH>
+            </ATTRIBUTE>
+            <ATTRIBUTE>
+               <NAME>Value</NAME>
+               <DATATYPE>INTEGER</DATATYPE>
+            </ATTRIBUTE>
+         </ATTRIBUTES>
+      </BLOCK>
+   </BLOCKS>
+   <PARAMETERS>
+      <PARAMETER>
+         <NAME>QuotationNo</NAME>
+         <PARAMETER_DATATYPE>TEXT</PARAMETER_DATATYPE>
+         <LENGTH>50</LENGTH>
+         <IS_MANDATORY>0</IS_MANDATORY>
+         <IS_CUSTOM>0</IS_CUSTOM>
+         <IS_SINGLE>0</IS_SINGLE>
+         <ALLOW_BETWEEN>0</ALLOW_BETWEEN>
+         <ALLOW_WILDCARDS>0</ALLOW_WILDCARDS>
+      </PARAMETER>
+      <PARAMETER>
+         <NAME>WoNo</NAME>
+         <PARAMETER_DATATYPE>NUMBER</PARAMETER_DATATYPE>
+         <IS_MANDATORY>0</IS_MANDATORY>
+         <IS_CUSTOM>0</IS_CUSTOM>
+         <IS_SINGLE>0</IS_SINGLE>
+         <ALLOW_BETWEEN>0</ALLOW_BETWEEN>
+         <ALLOW_WILDCARDS>0</ALLOW_WILDCARDS>
+      </PARAMETER>
+   </PARAMETERS>
+   <TEXTS>
+      <TEXT>
+         <NAME>JobQuote</NAME>
+         <VALUE>Sample</VALUE>
+      </TEXT>
+   </TEXTS>
+   <AGGREGATES>
+      <AGGREGATE>
+         <NAME>Headers1</NAME>
+         <IS_ARRAY>1</IS_ARRAY>
+         <BLOCK>JobQuoteHeader</BLOCK>
+         <ATTRIBUTES>
+            <AGGREGATE_ATTRIBUTE>
+               <NAME>QuotationNo</NAME>
+            </AGGREGATE_ATTRIBUTE>
+            <AGGREGATE_ATTRIBUTE>
+               <NAME>WoNo</NAME>
+            </AGGREGATE_ATTRIBUTE>
+         </ATTRIBUTES>
+      </AGGREGATE>
+   </AGGREGATES>
+</REPORT>

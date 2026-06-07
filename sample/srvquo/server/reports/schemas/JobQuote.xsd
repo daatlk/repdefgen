@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?report  module="SRVQUO" package="JOB_QUOTE_REP" ?>
+<xs:schema
+   targetNamespace="urn:ifsworld-com:job_quote_rep"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns="urn:ifsworld-com:job_quote_rep"
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+   <xs:element name="JOB_QUOTE_REP_REQUEST">
+      <xs:complexType>
+         <xs:all minOccurs="1" maxOccurs="1">
+            <xs:element name="PROCESSING_INFO">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="FORMATTING_OPTIONS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="COPIES" type="xs:int" nillable="true"/>
+                              <xs:element name="PAGE_FROM" type="xs:int" nillable="true"/>
+                              <xs:element name="PAGE_TO" type="xs:int" nillable="true"/>
+                              <xs:element name="LANG_CODE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="5"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LAYOUT_NAME" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PRINT_DIRECTORY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LAYOUT_FILE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="SELECTED_PRINTER" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="LANGUAGE_LAYOUT_FILE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PAPER_FORMAT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="PROCESSING_ATTRIBUTES">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="EXECUTION_TIME" type="xs:dateTime"/>
+                              <xs:element name="ORDERED_BY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="JOB_ID" type="xs:int" nillable="true"/>
+                              <xs:element name="COMMENT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="ORDER_TIME" type="xs:dateTime"/>
+                              <xs:element name="REPORT_TITLE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="PRINTED_BY" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="CREATED" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="STANDARD_TRANSLATIONS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="ATTRIBUTE_DISPLAY_TEXTS">
+                                 <xs:complexType>
+                                    <xs:all minOccurs="1" maxOccurs="1">
+                                       <xs:element name="EXECUTION_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="ORDERED_BY" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="JOB_ID" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="COMMENT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="ORDER_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="REPORT_TITLE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="PRINTED_BY" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CURRENT_TIME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CURRENT_DATE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="PAGE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="END_OF_REPORT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="REPORT_PARAMETERS" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="APPLICATION_TEXT" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CREATED" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NONE" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NOTES" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="NO_DATA_FOUND" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                    </xs:all>
+                                 </xs:complexType>
+                              </xs:element>
+                              <xs:element name="SITE_TEXTS">
+                                 <xs:complexType>
+                                    <xs:all minOccurs="1" maxOccurs="1">
+                                       <xs:element name="COMPANY_NAME" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_1" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_2" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_3" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_4" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_5" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_6" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_7" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_8" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_9" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SITE_TEXT_10" nillable="true">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                    </xs:all>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="JOB_QUOTE_REP_DATA_ASSEMBLY_PARAMETERS">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="QUOTATION_NO">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="DISPLAY_TEXT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="WO_NO">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="DISPLAY_TEXT" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="JOB_QUOTE_REP_ARCHIVE_VARIABLES">
+               <xs:complexType>
+                  <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                     <xs:element name="VARIABLE">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="NAME" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                              <xs:element name="VALUE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="JOB_QUOTE_REP_TRANSLATIONS">
+               <xs:complexType>
+                  <xs:all minOccurs="1" maxOccurs="1">
+                     <xs:element name="REPORT_TEXTS">
+                        <xs:complexType>
+                           <xs:all minOccurs="1" maxOccurs="1">
+                              <xs:element name="JOB_QUOTE" nillable="true">
+                                 <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                       <xs:maxLength value="200"/>
+                                    </xs:restriction>
+                                 </xs:simpleType>
+                              </xs:element>
+                           </xs:all>
+                        </xs:complexType>
+                     </xs:element>
+                     <xs:element name="ATTRIBUTE_DISPLAY_TEXTS">
+                        <xs:complexType>
+                           <xs:choice minOccurs="0" maxOccurs="1">
+                              <xs:element name="HEADERS1" nillable="true" minOccurs="0">
+                                 <xs:complexType>
+                                    <xs:choice minOccurs="0" maxOccurs="1">
+                                       <xs:element name="JOB_QUOTE_HEADER">
+                                          <xs:complexType>
+                                             <xs:choice minOccurs="0" maxOccurs="18">
+                                                <xs:element name="QUOTATION_NO" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="WQ_DATE_CREATED" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SQ_DATE_CREATED" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="WQ_CREATED_BY" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SQ_USER_CREATED" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_REFERENCE" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="WO_NO" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_ID" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_ADDRESS" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CUSTOMER_NAME" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SERVICE_ASSET_TAG" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="ASSET_DESCRIPTION" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SERIAL_NO" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SYSTEM_ASSET_ID" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="QUOTATION_REV" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="SITE_ADDRESS" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CURRENT_SPEND" nillable="true" minOccurs="0">
+                                                   <xs:simpleType>
+                                                      <xs:restriction base="xs:string">
+                                                         <xs:maxLength value="200"/>
+                                                      </xs:restriction>
+                                                   </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="DETAILS1" nillable="true" minOccurs="0">
+                                                   <xs:complexType>
+                                                      <xs:choice minOccurs="0" maxOccurs="1">
+                                                         <xs:element name="JOB_QUOTE_DETAIL">
+                                                            <xs:complexType>
+                                                               <xs:choice minOccurs="0" maxOccurs="4">
+                                                                  <xs:element name="DETAIL" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="QUANTITY" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="PRICE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                                  <xs:element name="VALUE" nillable="true" minOccurs="0">
+                                                                     <xs:simpleType>
+                                                                        <xs:restriction base="xs:string">
+                                                                           <xs:maxLength value="200"/>
+                                                                        </xs:restriction>
+                                                                     </xs:simpleType>
+                                                                  </xs:element>
+                                                               </xs:choice>
+                                                            </xs:complexType>
+                                                         </xs:element>
+                                                      </xs:choice>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:choice>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:choice>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:choice>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:all>
+               </xs:complexType>
+            </xs:element>
+            <xs:element name="JOB_QUOTE_REP">
+               <xs:complexType>
+                  <xs:choice minOccurs="0" maxOccurs="1">
+                     <xs:element name="HEADERS1" nillable="true" minOccurs="0">
+                        <xs:complexType>
+                           <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                              <xs:element name="JOB_QUOTE_HEADER">
+                                 <xs:complexType>
+                                    <xs:choice minOccurs="0" maxOccurs="18">
+                                       <xs:element name="QUOTATION_NO" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="12"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="WQ_DATE_CREATED" type="xs:dateTime" nillable="true" minOccurs="0"/>
+                                       <xs:element name="SQ_DATE_CREATED" type="xs:dateTime" nillable="true" minOccurs="0"/>
+                                       <xs:element name="WQ_CREATED_BY" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="30"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SQ_USER_CREATED" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="30"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CUSTOMER_REFERENCE" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="100"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="WO_NO" type="xs:float" nillable="true" minOccurs="0"/>
+                                       <xs:element name="CUSTOMER_ID" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="20"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CUSTOMER_ADDRESS" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="2000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CUSTOMER_NAME" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="4000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SERVICE_ASSET_TAG" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="4000"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="ASSET_DESCRIPTION" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="200"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SERIAL_NO" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="50"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="SYSTEM_ASSET_ID" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="10"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="QUOTATION_REV" type="xs:float" nillable="true" minOccurs="0"/>
+                                       <xs:element name="SITE_ADDRESS" nillable="true" minOccurs="0">
+                                          <xs:simpleType>
+                                             <xs:restriction base="xs:string">
+                                                <xs:maxLength value="400"/>
+                                             </xs:restriction>
+                                          </xs:simpleType>
+                                       </xs:element>
+                                       <xs:element name="CURRENT_SPEND" type="xs:float" nillable="true" minOccurs="0"/>
+                                       <xs:element name="DETAILS1" nillable="true" minOccurs="0">
+                                          <xs:complexType>
+                                             <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                                                <xs:element name="JOB_QUOTE_DETAIL">
+                                                   <xs:complexType>
+                                                      <xs:choice minOccurs="0" maxOccurs="4">
+                                                         <xs:element name="DETAIL" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="200"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="QUANTITY" type="xs:float" nillable="true" minOccurs="0"/>
+                                                         <xs:element name="PRICE" nillable="true" minOccurs="0">
+                                                            <xs:simpleType>
+                                                               <xs:restriction base="xs:string">
+                                                                  <xs:maxLength value="10"/>
+                                                               </xs:restriction>
+                                                            </xs:simpleType>
+                                                         </xs:element>
+                                                         <xs:element name="VALUE" type="xs:float" nillable="true" minOccurs="0"/>
+                                                      </xs:choice>
+                                                   </xs:complexType>
+                                                </xs:element>
+                                             </xs:sequence>
+                                          </xs:complexType>
+                                       </xs:element>
+                                    </xs:choice>
+                                 </xs:complexType>
+                              </xs:element>
+                           </xs:sequence>
+                        </xs:complexType>
+                     </xs:element>
+                  </xs:choice>
+               </xs:complexType>
+            </xs:element>
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

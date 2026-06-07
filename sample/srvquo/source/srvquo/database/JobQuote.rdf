@@ -1,0 +1,462 @@
+-----------------------------------------------------------------------------
+--
+--  Logical unit: JobQuote
+--
+--  Report:       JobQuote
+--
+--  IFS Developer Studio Template Version 1.3
+--
+--  NOTE: This file is generated and will be overwritten at next model change
+-----------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE SPECIFICATION ----------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating JOB_QUOTE_RPI specification
+
+CREATE OR REPLACE PACKAGE JOB_QUOTE_RPI AS
+
+module_ CONSTANT VARCHAR2(6) := 'SRVQUO';
+lu_name_ CONSTANT VARCHAR2(25) := 'JobQuote';
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 );
+
+FUNCTION Test (
+   quotation_no_             IN VARCHAR2,
+   wo_no_                    IN NUMBER)
+   RETURN NUMBER;
+
+PROCEDURE Init;
+
+END JOB_QUOTE_RPI;
+/
+SHOW ERROR
+
+-----------------------------------------------------------------------------
+-------------------- VIEWS FOR REPORT META DATA -----------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating report table JOB_QUOTE_RPT
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'JOB_QUOTE_RPT';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROWVERSION', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'QUOTATION_NO', 'VARCHAR2(50)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WO_NO', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WQ_DATE_CREATED', 'DATE', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SQ_DATE_CREATED', 'DATE', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'WQ_CREATED_BY', 'VARCHAR2(30)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SQ_USER_CREATED', 'VARCHAR2(30)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_REFERENCE', 'VARCHAR2(100)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_ID', 'VARCHAR2(20)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_ADDRESS', 'VARCHAR2(2000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CUSTOMER_NAME', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SERVICE_ASSET_TAG', 'VARCHAR2(4000)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'ASSET_DESCRIPTION', 'VARCHAR2(200)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SERIAL_NO', 'VARCHAR2(50)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SYSTEM_ASSET_ID', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'QUOTATION_REV', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'SITE_ADDRESS', 'VARCHAR2(400)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'CURRENT_SPEND', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'DETAIL', 'VARCHAR2(200)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'QUANTITY', 'NUMBER', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'PRICE', 'VARCHAR2(10)', 'Y');
+   Database_SYS.Set_Table_Column(columns_, 'VALUE', 'NUMBER', 'Y');
+   Database_SYS.Create_Or_Replace_Table(table_name_, columns_, '&IFSAPP_REPORT_DATA', NULL, TRUE);
+END;
+/
+
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := 'JOB_QUOTE_RPT';
+   index_name_ VARCHAR2(30) := 'JOB_QUOTE_RPK';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO');
+   Database_SYS.Create_Constraint(table_name_, index_name_, columns_, 'P', '&IFSAPP_REPORT_INDEX', NULL, TRUE, TRUE);
+   Database_SYS.Reset_Column_Table(columns_);
+END;
+/
+
+PROMPT Creating report view JOB_QUOTE_REP
+
+CREATE OR REPLACE VIEW JOB_QUOTE_REP AS
+SELECT RESULT_KEY, ROW_NO, PARENT_ROW_NO, ROWVERSION
+   ,QUOTATION_NO,WO_NO,WQ_DATE_CREATED,SQ_DATE_CREATED,WQ_CREATED_BY,SQ_USER_CREATED,CUSTOMER_REFERENCE,CUSTOMER_ID,CUSTOMER_ADDRESS,CUSTOMER_NAME,SERVICE_ASSET_TAG,ASSET_DESCRIPTION,SERIAL_NO,SYSTEM_ASSET_ID,QUOTATION_REV,SITE_ADDRESS,CURRENT_SPEND,DETAIL,QUANTITY,PRICE,VALUE
+FROM   JOB_QUOTE_RPT t
+WHERE EXISTS (SELECT 1 FROM allowed_report a WHERE a.result_key = t.result_key)
+WITH   read only;
+
+COMMENT ON TABLE JOB_QUOTE_REP
+   IS 'LU=JobQuote^PROMPT=Job Quote^MODULE=SRVQUO^TITLETEXT=Job Quote^';
+
+COMMENT ON COLUMN JOB_QUOTE_REP.result_key
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN JOB_QUOTE_REP.row_no
+   IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN JOB_QUOTE_REP.quotation_no
+   IS 'FLAGS=A----^DATATYPE=STRING(50)^TITLE=Quotation No^QUERY=Quotation No:^QFLAGS=OW---^';
+COMMENT ON COLUMN JOB_QUOTE_REP.wo_no
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Wo No^QUERY=Wo No:^QFLAGS=OW---^';
+COMMENT ON COLUMN JOB_QUOTE_REP.wq_date_created
+   IS 'FLAGS=A----^DATATYPE=DATE/DATETIME^TITLE=Wq Date Created^';
+COMMENT ON COLUMN JOB_QUOTE_REP.sq_date_created
+   IS 'FLAGS=A----^DATATYPE=DATE/DATETIME^TITLE=Sq Date Created^';
+COMMENT ON COLUMN JOB_QUOTE_REP.wq_created_by
+   IS 'FLAGS=A----^DATATYPE=STRING(30)^TITLE=Wq Created By^';
+COMMENT ON COLUMN JOB_QUOTE_REP.sq_user_created
+   IS 'FLAGS=A----^DATATYPE=STRING(30)^TITLE=Sq User Created^';
+COMMENT ON COLUMN JOB_QUOTE_REP.customer_reference
+   IS 'FLAGS=A----^DATATYPE=STRING(100)^TITLE=Customer Reference^';
+COMMENT ON COLUMN JOB_QUOTE_REP.customer_id
+   IS 'FLAGS=A----^DATATYPE=STRING(20)^TITLE=Customer Id^';
+COMMENT ON COLUMN JOB_QUOTE_REP.customer_address
+   IS 'FLAGS=A----^DATATYPE=STRING(2000)^TITLE=Customer Address^';
+COMMENT ON COLUMN JOB_QUOTE_REP.customer_name
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Customer Name^';
+COMMENT ON COLUMN JOB_QUOTE_REP.service_asset_tag
+   IS 'FLAGS=A----^DATATYPE=STRING(4000)^TITLE=Service Asset Tag^';
+COMMENT ON COLUMN JOB_QUOTE_REP.asset_description
+   IS 'FLAGS=A----^DATATYPE=STRING(200)^TITLE=Asset Description^';
+COMMENT ON COLUMN JOB_QUOTE_REP.serial_no
+   IS 'FLAGS=A----^DATATYPE=STRING(50)^TITLE=Serial No^';
+COMMENT ON COLUMN JOB_QUOTE_REP.system_asset_id
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=System Asset Id^';
+COMMENT ON COLUMN JOB_QUOTE_REP.quotation_rev
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Quotation Rev^';
+COMMENT ON COLUMN JOB_QUOTE_REP.site_address
+   IS 'FLAGS=A----^DATATYPE=STRING(400)^TITLE=Site Address^';
+COMMENT ON COLUMN JOB_QUOTE_REP.current_spend
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Current Spend^';
+COMMENT ON COLUMN JOB_QUOTE_REP.detail
+   IS 'FLAGS=A----^DATATYPE=STRING(200)^TITLE=Detail^';
+COMMENT ON COLUMN JOB_QUOTE_REP.quantity
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Quantity^';
+COMMENT ON COLUMN JOB_QUOTE_REP.price
+   IS 'FLAGS=A----^DATATYPE=STRING(10)^TITLE=Price^';
+COMMENT ON COLUMN JOB_QUOTE_REP.value
+   IS 'FLAGS=A----^DATATYPE=NUMBER^TITLE=Value^';
+
+-----------------------------------------------------------------------------
+-------------------- REPORT REGISTRATION ------------------------------------
+-----------------------------------------------------------------------------
+
+BEGIN
+   Report_SYS.Define_Report_('JOB_QUOTE_REP', 'SRVQUO', 'JobQuote', 'Job Quote', 'JOB_QUOTE_RPT', 'JOB_QUOTE_RPI.Execute_Report', 0);
+   Report_SYS.Define_Report_Text_('JOB_QUOTE_REP', 'JOB_QUOTE', 'Sample');
+   Report_SYS.Refresh_('JOB_QUOTE_REP');
+   Report_Lu_Definition_API.Clear_Custom_Fields_For_Report('JOB_QUOTE_REP');
+END;
+/
+
+-----------------------------------------------------------------------------
+-------------------- PACKAGE IMPLEMENTATION ---------------------------------
+-----------------------------------------------------------------------------
+
+PROMPT Creating JOB_QUOTE_RPI implementation
+
+CREATE OR REPLACE PACKAGE BODY JOB_QUOTE_RPI IS
+
+   TYPE binds$ IS RECORD (
+      quotation_no              VARCHAR2(32000),
+      wo_no                     NUMBER,
+      quotation_rev             VARCHAR2(32000));
+
+   CURSOR get_job_quote_header (quotation_no_ VARCHAR2, wo_no_ NUMBER) IS
+      select  wq.QUOTATION_NO,
+              wq.DATE_CREATED WQ_DATE_CREATED,
+              sq.DT_CRE SQ_DATE_CREATED,
+              wq.CREATED_BY as WQ_CREATED_BY,
+              sq.USER_CREATED AS SQ_USER_CREATED,
+              sq.CUSTOMER_REFERENCE,
+              NVL(wq.wo_no, wq.wo_quo_no) as WO_NO,
+              sq.CUSTOMER_ID,
+              csa.address as customer_address,
+              (customer_info_api.Get_Name(sq.CUSTOMER_ID)) AS customer_name,
+              ceq.CF$_QR_CODE as Service_Asset_Tag,
+              ceq.MCH_NAME as Asset_Description,
+              ceq.SERIAL_NO,
+              ceq.OBJECT_NO as System_Asset_ID,
+              wq.QUOTATION_REV,
+              null as test,
+              Service_Quotation_Address_API.Get_Formatted_Address(sq.quotation_no,
+                                                                       sq.quotation_rev,
+                                                                       'VISIT') as site_address,
+              SUM(st.total_cost) as current_spend
+       
+         from WO_SRV_QUO wq
+         LEFT JOIN service_quotation sq
+           on wq.quotation_no = sq. quotation_no
+         left join (SELECT a.Address, a.Address_Id, a.Customer_Id, t.Def_Address
+                      from CUSTOMER_INFO_ADDRESS a
+                      LEFT OUTER JOIN CUSTOMER_INFO_ADDRESS_TYPE t
+                        ON a.Customer_Id = t.Customer_Id
+                       and a.Address_Id = t.Address_Id
+                     WHERE t.Def_Address = 'TRUE'
+                       AND t.Address_Type_Code = 'Document') csa
+           on sq.customer_id = csa.customer_id
+         left join EQUIPMENT_OBJECT_UIV_CFV ceq
+           on wq.Mch_Code = ceq.Mch_Code
+          AND wq.MCH_CODE_CONTRACT = ceq.Contract
+        left join SERVICE_QUOTATION_TOTALS_UIV st on sq.quotation_no = st.quotation_no AND sq.quotation_rev = st.quotation_rev 
+        where wq.QUOTATION_NO = quotation_no_
+          and NVL(wq.wo_no, wq.wo_quo_no) = wo_no_
+        GROUP BY
+              wq.QUOTATION_NO,
+              wq.DATE_CREATED,
+              sq.DT_CRE,
+              wq.CREATED_BY,
+              sq.USER_CREATED,
+              sq.CUSTOMER_REFERENCE,
+              NVL(wq.wo_no, wq.wo_quo_no),
+              sq.CUSTOMER_ID,
+              csa.address,
+              ceq.CF$_QR_CODE,
+              ceq.MCH_NAME,
+              ceq.SERIAL_NO,
+              ceq.OBJECT_NO,
+              wq.QUOTATION_REV,
+              Service_Quotation_Address_API.Get_Formatted_Address(
+                  sq.quotation_no,
+                  sq.quotation_rev,
+                  'VISIT'
+              );
+
+   CURSOR get_job_quote_detail (quotation_no_ VARCHAR2, quotation_rev_ VARCHAR2, wo_no_ NUMBER) IS
+      select wp.CATALOG_DESCRIPTION as detail, wp.PLANNED_QTY as quantity,wp.PRICE_SOURCE_ID as price,wp.SALES_PRICE_CURR as value
+      from WO_PLAN_SRV_QUO wp
+      where wp.QUOTATION_NO = quotation_no_ and wp.QUOTATION_REV=quotation_rev_ and wp.WO_QUO_NO=wo_no_;
+
+-----------------------------------------------------------------------------
+-------------------- RESULT SET METHODS -------------------------------------
+-----------------------------------------------------------------------------
+
+--@IgnoreWrongParamOrder
+PROCEDURE Add_Result_Row___ (
+   result_key$_               IN NUMBER,
+   binds$_                    IN binds$,
+   rec_job_quote_header_      IN get_job_quote_header%ROWTYPE DEFAULT NULL,
+   rec_job_quote_detail_      IN get_job_quote_detail%ROWTYPE DEFAULT NULL,
+   row_no$_                   IN OUT NUMBER)
+IS
+BEGIN
+   INSERT INTO JOB_QUOTE_RPT (
+      result_key,
+      quotation_no,
+      wo_no,
+      wq_date_created,
+      sq_date_created,
+      wq_created_by,
+      sq_user_created,
+      customer_reference,
+      customer_id,
+      customer_address,
+      customer_name,
+      service_asset_tag,
+      asset_description,
+      serial_no,
+      system_asset_id,
+      quotation_rev,
+      site_address,
+      current_spend,
+      detail,
+      quantity,
+      price,
+      value,
+      row_no, parent_row_no)
+   VALUES (
+      result_key$_,
+      nvl(rec_job_quote_header_.quotation_no,
+      binds$_.quotation_no),
+      nvl(rec_job_quote_header_.wo_no,
+      binds$_.wo_no),
+      rec_job_quote_header_.wq_date_created,
+      rec_job_quote_header_.sq_date_created,
+      rec_job_quote_header_.wq_created_by,
+      rec_job_quote_header_.sq_user_created,
+      rec_job_quote_header_.customer_reference,
+      rec_job_quote_header_.customer_id,
+      rec_job_quote_header_.customer_address,
+      rec_job_quote_header_.customer_name,
+      rec_job_quote_header_.service_asset_tag,
+      rec_job_quote_header_.asset_description,
+      rec_job_quote_header_.serial_no,
+      rec_job_quote_header_.system_asset_id,
+      rec_job_quote_header_.quotation_rev,
+      rec_job_quote_header_.site_address,
+      rec_job_quote_header_.current_spend,
+      rec_job_quote_detail_.detail,
+      rec_job_quote_detail_.quantity,
+      rec_job_quote_detail_.price,
+      rec_job_quote_detail_.value,
+      row_no$_, 0);
+   row_no$_ := row_no$_+1;
+END Add_Result_Row___;
+
+-----------------------------------------------------------------------------
+-------------------- REPORT EXECUTION ---------------------------------------
+-----------------------------------------------------------------------------
+
+PROCEDURE Execute_Report (
+   report_attr_    IN VARCHAR2,
+   parameter_attr_ IN VARCHAR2 )
+IS
+   result_key$_              NUMBER;
+   row_no$_                  NUMBER := 1;
+   binds$_                   binds$;
+   xml$_                     CLOB;
+   outer_filter_attr$_       VARCHAR2(32000);
+   outer_filter_where$_      VARCHAR2(32000);
+   inner_filter_attr$_       VARCHAR2(32000);
+   inner_filter_where$_      VARCHAR2(32000);
+   has_job_quote_header_ BOOLEAN;
+   rec_job_quote_header_ get_job_quote_header%ROWTYPE;
+   par_job_quote_header_ binds$;
+   has_job_quote_detail_ BOOLEAN;
+   rec_job_quote_detail_ get_job_quote_detail%ROWTYPE;
+   par_job_quote_detail_ binds$;
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'JOB_QUOTE_RPI', 'Execute_Report');
+   result_key$_                 := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('RESULT_KEY', report_attr_));
+   binds$_.quotation_no         := Client_SYS.Get_Item_Value('QUOTATION_NO', parameter_attr_); 
+   binds$_.wo_no                := Client_SYS.Attr_Value_To_Number(Client_SYS.Get_Item_Value('WO_NO', parameter_attr_));
+
+   Xml_Record_Writer_SYS.Create_Report_Header(xml$_, 'JOB_QUOTE_REP', 'Job Quote');
+
+   has_job_quote_header_ := FALSE;
+   par_job_quote_header_ := binds$_;
+   Xml_Record_Writer_SYS.Start_Element(xml$_, 'HEADERS1');
+   OPEN get_job_quote_header(binds$_.quotation_no, binds$_.wo_no);
+   LOOP
+      FETCH get_job_quote_header INTO rec_job_quote_header_;
+      has_job_quote_header_ := get_job_quote_header%FOUND OR get_job_quote_header%ROWCOUNT > 0;
+      EXIT WHEN get_job_quote_header%NOTFOUND;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, 'JOB_QUOTE_HEADER');
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'QUOTATION_NO', rec_job_quote_header_.quotation_no);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'WQ_DATE_CREATED', rec_job_quote_header_.wq_date_created);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SQ_DATE_CREATED', rec_job_quote_header_.sq_date_created);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'WQ_CREATED_BY', rec_job_quote_header_.wq_created_by);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SQ_USER_CREATED', rec_job_quote_header_.sq_user_created);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_REFERENCE', rec_job_quote_header_.customer_reference);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'WO_NO', rec_job_quote_header_.wo_no);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_ID', rec_job_quote_header_.customer_id);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_ADDRESS', rec_job_quote_header_.customer_address);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CUSTOMER_NAME', rec_job_quote_header_.customer_name);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SERVICE_ASSET_TAG', rec_job_quote_header_.service_asset_tag);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'ASSET_DESCRIPTION', rec_job_quote_header_.asset_description);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SERIAL_NO', rec_job_quote_header_.serial_no);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SYSTEM_ASSET_ID', rec_job_quote_header_.system_asset_id);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'QUOTATION_REV', rec_job_quote_header_.quotation_rev);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'SITE_ADDRESS', rec_job_quote_header_.site_address);
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'CURRENT_SPEND', rec_job_quote_header_.current_spend);
+      has_job_quote_detail_ := FALSE;
+      par_job_quote_detail_ := binds$_;
+      binds$_.quotation_no := rec_job_quote_header_.quotation_no;
+      binds$_.quotation_rev := rec_job_quote_header_.quotation_rev;
+      binds$_.wo_no := rec_job_quote_header_.wo_no;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, 'DETAILS1');
+      OPEN get_job_quote_detail(rec_job_quote_header_.quotation_no, rec_job_quote_header_.quotation_rev, rec_job_quote_header_.wo_no);
+      LOOP
+         FETCH get_job_quote_detail INTO rec_job_quote_detail_;
+         has_job_quote_detail_ := get_job_quote_detail%FOUND OR get_job_quote_detail%ROWCOUNT > 0;
+         EXIT WHEN get_job_quote_detail%NOTFOUND;
+         Xml_Record_Writer_SYS.Start_Element(xml$_, 'JOB_QUOTE_DETAIL');
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'DETAIL', rec_job_quote_detail_.detail);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'QUANTITY', rec_job_quote_detail_.quantity);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'PRICE', rec_job_quote_detail_.price);
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'VALUE', rec_job_quote_detail_.value);
+         Xml_Record_Writer_SYS.End_Element(xml$_, 'JOB_QUOTE_DETAIL');
+         Add_Result_Row___(result_key$_,
+                           binds$_ => binds$_,
+                           rec_job_quote_header_ => rec_job_quote_header_,
+                           rec_job_quote_detail_ => rec_job_quote_detail_,
+                           row_no$_ => row_no$_);
+      END LOOP;
+      CLOSE get_job_quote_detail;
+      Xml_Record_Writer_SYS.End_Element(xml$_, 'DETAILS1');
+      binds$_ := par_job_quote_detail_;
+      IF NOT has_job_quote_detail_ THEN
+         Add_Result_Row___(result_key$_,
+                           binds$_ => binds$_,
+                           rec_job_quote_header_ => rec_job_quote_header_,
+                           row_no$_ => row_no$_);
+      END IF;
+
+      Xml_Record_Writer_SYS.End_Element(xml$_, 'JOB_QUOTE_HEADER');
+   END LOOP;
+   CLOSE get_job_quote_header;
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'HEADERS1');
+   binds$_ := par_job_quote_header_;
+   IF NOT has_job_quote_header_ THEN
+      Add_Result_Row___(result_key$_,
+                        binds$_ => binds$_,
+                        row_no$_ => row_no$_);
+   END IF;
+
+   Xml_Record_Writer_SYS.End_Element(xml$_, 'JOB_QUOTE_REP');
+   Report_SYS.Finish_Xml_Report('JOB_QUOTE_REP', result_key$_, xml$_);
+   EXCEPTION
+      WHEN OTHERS THEN
+         IF get_job_quote_header%ISOPEN THEN
+            CLOSE get_job_quote_header;
+         END IF;
+         IF get_job_quote_detail%ISOPEN THEN
+            CLOSE get_job_quote_detail;
+         END IF;
+         RAISE;
+END Execute_Report;
+
+-----------------------------------------------------------------------------
+-------------------- FOUNDATION1 METHODS ------------------------------------
+-----------------------------------------------------------------------------
+-- Test
+--   Invokes the report method for testing purposes.
+-- Init
+--   Dummy procedure that can be called at database startup to ensure that
+--   this package is loaded into memory for performance reasons only.
+-----------------------------------------------------------------------------
+
+FUNCTION Test (
+   quotation_no_             IN VARCHAR2,
+   wo_no_                    IN NUMBER)
+RETURN NUMBER
+IS
+   result_key_     NUMBER;
+   report_attr_    VARCHAR2(200);
+   parameter_attr_ VARCHAR2(32000);
+BEGIN
+   General_SYS.Init_Method(lu_name_, 'JOB_QUOTE_RPI', 'Test');
+   Report_SYS.Get_Result_Key__(result_key_);
+   Client_SYS.Add_To_Attr('RESULT_KEY', result_key_, report_attr_);
+   IF (quotation_no_ IS NOT NULL) THEN
+      Client_SYS.Add_To_Attr('QUOTATION_NO', quotation_no_, parameter_attr_);
+   END IF;
+   IF (wo_no_ IS NOT NULL) THEN
+      Client_SYS.Add_To_Attr('WO_NO', wo_no_, parameter_attr_);
+   END IF;
+   Execute_Report(report_attr_, parameter_attr_);
+   RETURN result_key_;
+END Test;
+
+
+PROCEDURE Init
+IS
+BEGIN
+   NULL;
+END Init;
+
+END JOB_QUOTE_RPI;
+/
+SHOW ERROR

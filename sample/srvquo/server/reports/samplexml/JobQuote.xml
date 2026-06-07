@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JOB_QUOTE_REP_REQUEST
+   xmlns="urn:ifsworld-com:job_quote_rep"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="urn:ifsworld-com:job_quote_rep ../schemas/JobQuote.xsd">
+   <PROCESSING_INFO>
+      <FORMATTING_OPTIONS>
+         <COPIES>1</COPIES>
+         <PAGE_FROM>1</PAGE_FROM>
+         <PAGE_TO>99</PAGE_TO>
+         <LANG_CODE>en</LANG_CODE>
+         <LAYOUT_NAME/>
+         <PRINT_DIRECTORY>.</PRINT_DIRECTORY>
+         <LAYOUT_FILE/>
+         <SELECTED_PRINTER/>
+         <LANGUAGE_LAYOUT_FILE/>
+         <PAPER_FORMAT/>
+      </FORMATTING_OPTIONS>
+      <PROCESSING_ATTRIBUTES>
+         <EXECUTION_TIME>2009-01-01T11:22:00</EXECUTION_TIME>
+         <ORDERED_BY/>
+         <JOB_ID>12345</JOB_ID>
+         <COMMENT/>
+         <ORDER_TIME>2009-01-01T11:22:00</ORDER_TIME>
+         <REPORT_TITLE>Job Quote</REPORT_TITLE>
+         <PRINTED_BY/>
+         <CREATED/>
+      </PROCESSING_ATTRIBUTES>
+      <STANDARD_TRANSLATIONS>
+         <ATTRIBUTE_DISPLAY_TEXTS>
+            <EXECUTION_TIME>Execution Time:</EXECUTION_TIME>
+            <ORDERED_BY>Ordered By:</ORDERED_BY>
+            <JOB_ID>Job Id:</JOB_ID>
+            <COMMENT>Comment:</COMMENT>
+            <ORDER_TIME>Order Time:</ORDER_TIME>
+            <REPORT_TITLE>Report:</REPORT_TITLE>
+            <PRINTED_BY>Printed By:</PRINTED_BY>
+            <CURRENT_TIME>Current Time:</CURRENT_TIME>
+            <CURRENT_DATE>Current Date:</CURRENT_DATE>
+            <PAGE>Page</PAGE>
+            <END_OF_REPORT>-------- End of Report --------</END_OF_REPORT>
+            <REPORT_PARAMETERS>Rep. Params:</REPORT_PARAMETERS>
+            <APPLICATION_TEXT>IFS Applications</APPLICATION_TEXT>
+            <CREATED>Created:</CREATED>
+            <NONE>none</NONE>
+            <NOTES>Notes:</NOTES>
+            <NO_DATA_FOUND>No data found</NO_DATA_FOUND>
+         </ATTRIBUTE_DISPLAY_TEXTS>
+         <SITE_TEXTS>
+            <COMPANY_NAME/>
+            <SITE_TEXT_1/>
+            <SITE_TEXT_2/>
+            <SITE_TEXT_3/>
+            <SITE_TEXT_4/>
+            <SITE_TEXT_5/>
+            <SITE_TEXT_6/>
+            <SITE_TEXT_7/>
+            <SITE_TEXT_8/>
+            <SITE_TEXT_9/>
+            <SITE_TEXT_10/>
+         </SITE_TEXTS>
+      </STANDARD_TRANSLATIONS>
+   </PROCESSING_INFO>
+   <JOB_QUOTE_REP_DATA_ASSEMBLY_PARAMETERS>
+      <QUOTATION_NO>
+         <DISPLAY_TEXT>Quotation No:</DISPLAY_TEXT>
+         <VALUE/>
+      </QUOTATION_NO>
+      <WO_NO>
+         <DISPLAY_TEXT>Wo No:</DISPLAY_TEXT>
+         <VALUE/>
+      </WO_NO>
+   </JOB_QUOTE_REP_DATA_ASSEMBLY_PARAMETERS>
+   <JOB_QUOTE_REP_ARCHIVE_VARIABLES/>
+   <JOB_QUOTE_REP_TRANSLATIONS>
+      <REPORT_TEXTS>
+         <JOB_QUOTE>Sample</JOB_QUOTE>
+      </REPORT_TEXTS>
+      <ATTRIBUTE_DISPLAY_TEXTS>
+         <HEADERS1>
+            <JOB_QUOTE_HEADER>
+               <QUOTATION_NO>Quotation No:</QUOTATION_NO>
+               <WQ_DATE_CREATED>Wq Date Created:</WQ_DATE_CREATED>
+               <SQ_DATE_CREATED>Sq Date Created:</SQ_DATE_CREATED>
+               <WQ_CREATED_BY>Wq Created By:</WQ_CREATED_BY>
+               <SQ_USER_CREATED>Sq User Created:</SQ_USER_CREATED>
+               <CUSTOMER_REFERENCE>Customer Reference:</CUSTOMER_REFERENCE>
+               <WO_NO>Wo No:</WO_NO>
+               <CUSTOMER_ID>Customer Id:</CUSTOMER_ID>
+               <CUSTOMER_ADDRESS>Customer Address:</CUSTOMER_ADDRESS>
+               <CUSTOMER_NAME>Customer Name:</CUSTOMER_NAME>
+               <SERVICE_ASSET_TAG>Service Asset Tag:</SERVICE_ASSET_TAG>
+               <ASSET_DESCRIPTION>Asset Description:</ASSET_DESCRIPTION>
+               <SERIAL_NO>Serial No:</SERIAL_NO>
+               <SYSTEM_ASSET_ID>System Asset Id:</SYSTEM_ASSET_ID>
+               <QUOTATION_REV>Quotation Rev:</QUOTATION_REV>
+               <SITE_ADDRESS>Site Address:</SITE_ADDRESS>
+               <CURRENT_SPEND>Current Spend:</CURRENT_SPEND>
+               <DETAILS1>
+                  <JOB_QUOTE_DETAIL>
+                     <DETAIL>Detail:</DETAIL>
+                     <QUANTITY>Quantity:</QUANTITY>
+                     <PRICE>Price:</PRICE>
+                     <VALUE>Value:</VALUE>
+                  </JOB_QUOTE_DETAIL>
+               </DETAILS1>
+            </JOB_QUOTE_HEADER>
+         </HEADERS1>
+      </ATTRIBUTE_DISPLAY_TEXTS>
+   </JOB_QUOTE_REP_TRANSLATIONS>
+   <JOB_QUOTE_REP>
+      <HEADERS1>
+         <JOB_QUOTE_HEADER>
+            <QUOTATION_NO>ABC</QUOTATION_NO>
+            <WQ_DATE_CREATED>2009-01-01T11:22:00</WQ_DATE_CREATED>
+            <SQ_DATE_CREATED>2009-01-01T11:22:00</SQ_DATE_CREATED>
+            <WQ_CREATED_BY>ABC</WQ_CREATED_BY>
+            <SQ_USER_CREATED>ABC</SQ_USER_CREATED>
+            <CUSTOMER_REFERENCE>ABC</CUSTOMER_REFERENCE>
+            <WO_NO>123</WO_NO>
+            <CUSTOMER_ID>ABC</CUSTOMER_ID>
+            <CUSTOMER_ADDRESS>ABC</CUSTOMER_ADDRESS>
+            <CUSTOMER_NAME>ABC</CUSTOMER_NAME>
+            <SERVICE_ASSET_TAG>ABC</SERVICE_ASSET_TAG>
+            <ASSET_DESCRIPTION>ABC</ASSET_DESCRIPTION>
+            <SERIAL_NO>ABC</SERIAL_NO>
+            <SYSTEM_ASSET_ID>ABC</SYSTEM_ASSET_ID>
+            <QUOTATION_REV>123</QUOTATION_REV>
+            <SITE_ADDRESS>ABC</SITE_ADDRESS>
+            <CURRENT_SPEND>123</CURRENT_SPEND>
+            <DETAILS1>
+               <JOB_QUOTE_DETAIL>
+                  <DETAIL>ABC</DETAIL>
+                  <QUANTITY>123</QUANTITY>
+                  <PRICE>ABC</PRICE>
+                  <VALUE>123</VALUE>
+               </JOB_QUOTE_DETAIL>
+               <JOB_QUOTE_DETAIL>
+                  <DETAIL>ABC</DETAIL>
+                  <QUANTITY>123</QUANTITY>
+                  <PRICE>ABC</PRICE>
+                  <VALUE>123</VALUE>
+               </JOB_QUOTE_DETAIL>
+            </DETAILS1>
+         </JOB_QUOTE_HEADER>
+         <JOB_QUOTE_HEADER>
+            <QUOTATION_NO>ABC</QUOTATION_NO>
+            <WQ_DATE_CREATED>2009-01-01T11:22:00</WQ_DATE_CREATED>
+            <SQ_DATE_CREATED>2009-01-01T11:22:00</SQ_DATE_CREATED>
+            <WQ_CREATED_BY>ABC</WQ_CREATED_BY>
+            <SQ_USER_CREATED>ABC</SQ_USER_CREATED>
+            <CUSTOMER_REFERENCE>ABC</CUSTOMER_REFERENCE>
+            <WO_NO>123</WO_NO>
+            <CUSTOMER_ID>ABC</CUSTOMER_ID>
+            <CUSTOMER_ADDRESS>ABC</CUSTOMER_ADDRESS>
+            <CUSTOMER_NAME>ABC</CUSTOMER_NAME>
+            <SERVICE_ASSET_TAG>ABC</SERVICE_ASSET_TAG>
+            <ASSET_DESCRIPTION>ABC</ASSET_DESCRIPTION>
+            <SERIAL_NO>ABC</SERIAL_NO>
+            <SYSTEM_ASSET_ID>ABC</SYSTEM_ASSET_ID>
+            <QUOTATION_REV>123</QUOTATION_REV>
+            <SITE_ADDRESS>ABC</SITE_ADDRESS>
+            <CURRENT_SPEND>123</CURRENT_SPEND>
+            <DETAILS1>
+               <JOB_QUOTE_DETAIL>
+                  <DETAIL>ABC</DETAIL>
+                  <QUANTITY>123</QUANTITY>
+                  <PRICE>ABC</PRICE>
+                  <VALUE>123</VALUE>
+               </JOB_QUOTE_DETAIL>
+               <JOB_QUOTE_DETAIL>
+                  <DETAIL>ABC</DETAIL>
+                  <QUANTITY>123</QUANTITY>
+                  <PRICE>ABC</PRICE>
+                  <VALUE>123</VALUE>
+               </JOB_QUOTE_DETAIL>
+            </DETAILS1>
+         </JOB_QUOTE_HEADER>
+      </HEADERS1>
+   </JOB_QUOTE_REP>
+</JOB_QUOTE_REP_REQUEST>
