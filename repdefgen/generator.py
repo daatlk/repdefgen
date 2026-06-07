@@ -78,95 +78,244 @@ def _load_sample_text(path: Path) -> str:
 # ---------------------------------------------------------------------------
 
 _RDF_SKELETON = """\
--- ═══ .rdf STRUCTURAL SKELETON ═══
+-- ═══ .rdf STRUCTURAL SKELETON — follow EVERY pattern exactly ═══
 -- Naming: <BASE>_REP (view), <BASE>_RPT (table), <BASE>_RPI (package)
+-- Use hard-coded object names throughout — no &DEFINE substitution variables
+-- Use SHOW ERROR (no S) after each CREATE ... /
 
-PACKAGE <BASE>_RPI IS
-  TYPE binds$ IS RECORD (
-    -- ALL cursor params across ALL blocks (report params + inter-block linking fields)
-    param1_  VARCHAR2(50),
-    param2_  NUMBER,
-    linking_ VARCHAR2(12)   -- e.g. QUOTATION_REV passed from header to detail cursor
-  );
-  PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2);
-  FUNCTION  Test(p1_ IN VARCHAR2, p2_ IN NUMBER) RETURN VARCHAR2;
-  PROCEDURE Init;
+-- ── PACKAGE SPECIFICATION ───────────────────────────────────────────────────
+CREATE OR REPLACE PACKAGE <BASE>_RPI AS
+   module_  CONSTANT VARCHAR2(6)  := '<MODULE>';
+   lu_name_ CONSTANT VARCHAR2(25) := '<LU>';
+   -- binds$ is NOT in the spec — it lives in the package body only
+   PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2);
+   FUNCTION  Test(param1_ IN VARCHAR2, param2_ IN NUMBER) RETURN NUMBER;
+   PROCEDURE Init;
 END <BASE>_RPI;
+/
+SHOW ERROR
 
--- RPT table (one Database_SYS.Set_Table_Column call per column):
-Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY',    'NUMBER(10)',     'N', 'Y');
-Database_SYS.Set_Table_Column(columns_, 'ROW_NO',        'NUMBER(10)',     'N', 'Y');
-Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER(10)',     'N', 'Y');
-Database_SYS.Set_Table_Column(columns_, 'ROWVERSION',    'DATE',           'N', 'Y');
-Database_SYS.Set_Table_Column(columns_, 'FIELD_NAME',    'VARCHAR2(100)',  'Y', 'N');
--- ... one line per field ...
-Database_SYS.Create_Or_Replace_Table('<BASE>_RPT', columns_, '&IFSAPP_DATA', NULL, TRUE);
+-- ── RPT TABLE ───────────────────────────────────────────────────────────────
+-- Standard header columns (use plain NUMBER, not NUMBER(10); ROWVERSION is NUMBER)
+-- 'N' = NOT NULL, 'Y' = nullable  (only 3 args: name, type, nullable)
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := '<BASE>_RPT';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY',    'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO',        'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO', 'NUMBER', 'N');
+   Database_SYS.Set_Table_Column(columns_, 'ROWVERSION',    'NUMBER', 'Y'); -- NUMBER, not DATE
+   -- one line per data field (nullable):
+   Database_SYS.Set_Table_Column(columns_, 'FIELD_NAME', 'VARCHAR2(100)', 'Y');
+   -- ... all other fields ...
+   Database_SYS.Create_Or_Replace_Table(table_name_, columns_, '&IFSAPP_REPORT_DATA', NULL, TRUE);
+END;
+/
 
--- Column comments (FLAGS: A=Always shown, Q=Query prompt, M=Mandatory):
-COMMENT ON COLUMN <BASE>_RPT.FIELD_NAME IS
-   'FLAGS=A----^DATATYPE=STRING(100)^TITLE=Field Label^QUERY=:^';
+-- ── RPT INDEX (separate DECLARE block) ──────────────────────────────────────
+-- Index name: replace _RPT with _RPK (e.g. JOB_QUOTE_RPT → JOB_QUOTE_RPK)
+DECLARE
+   columns_    Database_SYS.ColumnTabType;
+   table_name_ VARCHAR2(30) := '<BASE>_RPT';
+   index_name_ VARCHAR2(30) := '<BASE>_RPK';
+BEGIN
+   Database_SYS.Reset_Column_Table(columns_);
+   Database_SYS.Set_Table_Column(columns_, 'RESULT_KEY');
+   Database_SYS.Set_Table_Column(columns_, 'ROW_NO');
+   Database_SYS.Set_Table_Column(columns_, 'PARENT_ROW_NO');
+   Database_SYS.Create_Constraint(table_name_, index_name_, columns_, 'P', '&IFSAPP_REPORT_INDEX', NULL, TRUE, TRUE);
+   Database_SYS.Reset_Column_Table(columns_);
+END;
+/
 
--- REP view:
+-- ── REP VIEW ────────────────────────────────────────────────────────────────
+-- Filter: EXISTS subquery against allowed_report (NOT: WHERE allowed_report = 'TRUE')
 CREATE OR REPLACE VIEW <BASE>_REP AS
-   SELECT * FROM <BASE>_RPT WHERE allowed_report = 'TRUE'
-   WITH READ ONLY;
+SELECT RESULT_KEY, ROW_NO, PARENT_ROW_NO, ROWVERSION,
+       FIELD1, FIELD2  -- list every column
+FROM   <BASE>_RPT t
+WHERE  EXISTS (SELECT 1 FROM allowed_report a WHERE a.result_key = t.result_key)
+WITH   read only;
 
--- Registration:
-Report_SYS.Define_Report_('<BASE>_REP', '<MODULE>', '<LU>', '<Title>',
-                          '<BASE>_RPT', '<BASE>_RPI.Execute_Report', 0);
-Report_SYS.Define_Report_Text_('<BASE>_REP', '<TEXT_KEY>', 'Sample');
+-- Comments ONLY on the REP view (NOT on the RPT table)
+-- COMMENT ON TABLE: include LU, PROMPT, MODULE, and TITLETEXT
+COMMENT ON TABLE <BASE>_REP IS
+   'LU=<LU>^PROMPT=<Title>^MODULE=<MODULE>^TITLETEXT=<Title>^';
+COMMENT ON COLUMN <BASE>_REP.result_key IS 'FLAGS=M----^DATATYPE=NUMBER^';
+COMMENT ON COLUMN <BASE>_REP.row_no     IS 'FLAGS=M----^DATATYPE=NUMBER^';
+-- Report parameter columns (user-visible, queryable) — QFLAGS=OW---:
+COMMENT ON COLUMN <BASE>_REP.param_col  IS
+   'FLAGS=A----^DATATYPE=STRING(50)^TITLE=Param Label^QUERY=Param Label:^QFLAGS=OW---^';
+-- Data columns (visible only):
+COMMENT ON COLUMN <BASE>_REP.data_col   IS
+   'FLAGS=A----^DATATYPE=STRING(100)^TITLE=Data Label^';
 
--- Package body:
-PACKAGE BODY <BASE>_RPI IS
-  PROCEDURE Add_Result_Row___(result_key_ NUMBER, row_no_ IN OUT NUMBER,
-                              parent_row_no_ NUMBER, rec_ <BASE>_RPT%ROWTYPE) IS
-  BEGIN
-    General_SYS.Init_Method('<BASE>_RPI', NULL, 'Add_Result_Row___', TRUE);
-    INSERT INTO <BASE>_RPT VALUES rec_;
-    row_no_ := row_no_ + 1;
-  END Add_Result_Row___;
+-- ── REPORT REGISTRATION ─────────────────────────────────────────────────────
+-- Text key = report name WITHOUT the _REP suffix (e.g. JOB_QUOTE_REP → JOB_QUOTE)
+BEGIN
+   Report_SYS.Define_Report_('<BASE>_REP', '<MODULE>', '<LU>', '<Title>',
+                             '<BASE>_RPT', '<BASE>_RPI.Execute_Report', 0);
+   Report_SYS.Define_Report_Text_('<BASE>_REP', '<BASE_WITHOUT_REP>', 'Sample');
+   Report_SYS.Refresh_('<BASE>_REP');
+   Report_Lu_Definition_API.Clear_Custom_Fields_For_Report('<BASE>_REP');
+END;
+/
 
-  PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2) IS
-    binds_   binds$;
-    xml_     CLOB;
-    header_  <BASE>_RPT%ROWTYPE;
-    detail_  <BASE>_RPT%ROWTYPE;
-    row_no_  NUMBER := 1;
-    CURSOR get_header(p1_ VARCHAR2, p2_ NUMBER) IS
-       SELECT ... FROM <view1>, <view2> WHERE ...;
-    CURSOR get_detail(p1_ VARCHAR2, link_ VARCHAR2, p2_ NUMBER) IS
-       SELECT ... FROM <view3> WHERE ...;
-  BEGIN
-    General_SYS.Init_Method('<BASE>_RPI', NULL, 'Execute_Report');
-    -- bind parameters from parameter_attr_
-    Client_SYS.Add_To_Attr('PARAM1', binds_.param1_, parameter_attr_);
-    Report_SYS.Start_Xml_Report(xml_, '<BASE>_REP');
-    FOR h IN get_header(binds_.param1_, binds_.param2_) LOOP
-      header_.result_key    := Report_SYS.Get_Result_Key;
-      header_.row_no        := row_no_;
-      header_.parent_row_no := 0;
-      header_.FIELD_NAME    := h.field_name;
-      -- populate all header fields ...
-      Xml_Record_Writer_SYS.Start_Element(xml_, 'HEADERS1');
-      Xml_Record_Writer_SYS.Add_Element(xml_, 'FIELD_NAME', h.field_name);
-      -- link field for detail cursor:
-      binds_.linking_ := h.linking_field;
-      FOR d IN get_detail(binds_.param1_, binds_.linking_, binds_.param2_) LOOP
-        detail_.result_key    := Report_SYS.Get_Result_Key;
-        detail_.row_no        := row_no_;
-        detail_.parent_row_no := header_.row_no;
-        detail_.DETAIL_FIELD  := d.detail_field;
-        Add_Result_Row___(detail_.result_key, row_no_, header_.row_no, detail_);
-        Xml_Record_Writer_SYS.Start_Element(xml_, 'DETAILS1');
-        Xml_Record_Writer_SYS.Add_Element(xml_, 'DETAIL_FIELD', d.detail_field);
-        Xml_Record_Writer_SYS.End_Element(xml_, 'DETAILS1');
+-- ── PACKAGE BODY ────────────────────────────────────────────────────────────
+CREATE OR REPLACE PACKAGE BODY <BASE>_RPI IS
+
+   -- binds$ in the BODY only (not spec); string binds use VARCHAR2(32000)
+   TYPE binds$ IS RECORD (
+      param1       VARCHAR2(32000),  -- string report param, no trailing underscore
+      param2       NUMBER,            -- numeric report param
+      linking_col  VARCHAR2(32000)   -- inter-block field passed from parent to child cursor
+   );
+
+   -- Cursors at package-body level (outside Execute_Report):
+   CURSOR get_header(param1_ VARCHAR2, param2_ NUMBER) IS
+      SELECT h.col1, h.linking_col, ... FROM <VIEW1> h
+      LEFT JOIN <VIEW2> v ON h.key = v.key
+      WHERE h.param1 = param1_ AND h.param2 = param2_;
+
+   CURSOR get_detail(param1_ VARCHAR2, linking_col_ VARCHAR2, param2_ NUMBER) IS
+      SELECT d.col1, ...
+      FROM <VIEW3> d
+      WHERE d.param1 = param1_ AND d.linking_col = linking_col_;
+
+-- ── Add_Result_Row___ ────────────────────────────────────────────────────────
+-- One %ROWTYPE parameter per cursor block, each DEFAULT NULL
+-- Uses named-notation call site; INSERT into explicit column list with NVL fallback
+--@IgnoreWrongParamOrder
+PROCEDURE Add_Result_Row___ (
+   result_key$_       IN NUMBER,
+   binds$_            IN binds$,
+   rec_header_        IN get_header%ROWTYPE  DEFAULT NULL,
+   rec_detail_        IN get_detail%ROWTYPE  DEFAULT NULL,
+   row_no$_           IN OUT NUMBER)
+IS
+BEGIN
+   INSERT INTO <BASE>_RPT (
+      result_key, row_no, parent_row_no,
+      param1_col, linking_col, detail_col)
+   VALUES (
+      result_key$_,
+      row_no$_, 0,
+      NVL(rec_header_.param1_col, binds$_.param1),
+      rec_header_.linking_col,
+      rec_detail_.detail_col);
+   row_no$_ := row_no$_ + 1;
+END Add_Result_Row___;
+
+-- ── Execute_Report ───────────────────────────────────────────────────────────
+PROCEDURE Execute_Report(report_attr_ IN VARCHAR2, parameter_attr_ IN VARCHAR2) IS
+   result_key$_         NUMBER;
+   row_no$_             NUMBER := 1;
+   binds$_              binds$;
+   xml$_                CLOB;
+   has_header_          BOOLEAN;
+   rec_header_          get_header%ROWTYPE;
+   par_header_          binds$;
+   has_detail_          BOOLEAN;
+   rec_detail_          get_detail%ROWTYPE;
+   par_detail_          binds$;
+BEGIN
+   General_SYS.Init_Method(lu_name_, '<BASE>_RPI', 'Execute_Report');
+   -- 1. Extract result key from report_attr_ (not Report_SYS.Get_Result_Key):
+   result_key$_ := Client_SYS.Attr_Value_To_Number(
+                      Client_SYS.Get_Item_Value('RESULT_KEY', report_attr_));
+   -- 2. Bind report-level parameters from parameter_attr_:
+   binds$_.param1 := Client_SYS.Get_Item_Value('PARAM1', parameter_attr_);
+   binds$_.param2 := Client_SYS.Attr_Value_To_Number(
+                        Client_SYS.Get_Item_Value('PARAM2', parameter_attr_));
+   -- 3. Initialise XML report:
+   Xml_Record_Writer_SYS.Create_Report_Header(xml$_, '<BASE>_REP', '<Title>');
+   -- 4. Header loop — OPEN/FETCH/CLOSE (not FOR...IN LOOP):
+   has_header_ := FALSE;
+   par_header_ := binds$_;
+   Xml_Record_Writer_SYS.Start_Element(xml$_, '<HEADER_AGGREGATE>'); -- e.g. 'HEADERS1'
+   OPEN get_header(binds$_.param1, binds$_.param2);
+   LOOP
+      FETCH get_header INTO rec_header_;
+      has_header_ := get_header%FOUND OR get_header%ROWCOUNT > 0;
+      EXIT WHEN get_header%NOTFOUND;
+      -- Capture inter-block linking field from this header row:
+      binds$_.linking_col := rec_header_.linking_col;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, '<HEADER_BLOCK>'); -- e.g. 'JOB_QUOTE_HEADER'
+      Xml_Record_Writer_SYS.Add_Element(xml$_, 'FIELD1', rec_header_.col1);
+      -- ... all header fields ...
+      -- 5. Detail loop (nested):
+      has_detail_ := FALSE;
+      par_detail_ := binds$_;
+      binds$_.param1       := rec_header_.param1_col;
+      binds$_.linking_col  := rec_header_.linking_col;
+      Xml_Record_Writer_SYS.Start_Element(xml$_, '<DETAIL_AGGREGATE>'); -- e.g. 'DETAILS1'
+      OPEN get_detail(binds$_.param1, binds$_.linking_col, binds$_.param2);
+      LOOP
+         FETCH get_detail INTO rec_detail_;
+         has_detail_ := get_detail%FOUND OR get_detail%ROWCOUNT > 0;
+         EXIT WHEN get_detail%NOTFOUND;
+         Xml_Record_Writer_SYS.Start_Element(xml$_, '<DETAIL_BLOCK>');
+         Xml_Record_Writer_SYS.Add_Element(xml$_, 'DETAIL_FIELD', rec_detail_.col1);
+         Xml_Record_Writer_SYS.End_Element(xml$_, '<DETAIL_BLOCK>');
+         Add_Result_Row___(result_key$_,
+                           binds$_        => binds$_,
+                           rec_header_    => rec_header_,
+                           rec_detail_    => rec_detail_,
+                           row_no$_       => row_no$_);
       END LOOP;
-      Add_Result_Row___(header_.result_key, row_no_, 0, header_);
-      Xml_Record_Writer_SYS.End_Element(xml_, 'HEADERS1');
-    END LOOP;
-    Report_SYS.Finish_Xml_Report(xml_, result_key_);
-  END Execute_Report;
-END <BASE>_RPI;"""
+      CLOSE get_detail;
+      Xml_Record_Writer_SYS.End_Element(xml$_, '<DETAIL_AGGREGATE>');
+      binds$_ := par_detail_;
+      -- Fallback: write an empty detail row so the header is never orphaned:
+      IF NOT has_detail_ THEN
+         Add_Result_Row___(result_key$_, binds$_ => binds$_,
+                           rec_header_ => rec_header_, row_no$_ => row_no$_);
+      END IF;
+      Xml_Record_Writer_SYS.End_Element(xml$_, '<HEADER_BLOCK>');
+   END LOOP;
+   CLOSE get_header;
+   Xml_Record_Writer_SYS.End_Element(xml$_, '<HEADER_AGGREGATE>');
+   binds$_ := par_header_;
+   -- Fallback: write a row even when query returns nothing:
+   IF NOT has_header_ THEN
+      Add_Result_Row___(result_key$_, binds$_ => binds$_, row_no$_ => row_no$_);
+   END IF;
+   -- 6. Close report XML and finish (report name is first arg):
+   Xml_Record_Writer_SYS.End_Element(xml$_, '<BASE>_REP');
+   Report_SYS.Finish_Xml_Report('<BASE>_REP', result_key$_, xml$_);
+EXCEPTION
+   WHEN OTHERS THEN
+      IF get_header%ISOPEN THEN CLOSE get_header; END IF;
+      IF get_detail%ISOPEN THEN CLOSE get_detail; END IF;
+      RAISE;
+END Execute_Report;
+
+-- ── Test function ────────────────────────────────────────────────────────────
+FUNCTION Test(param1_ IN VARCHAR2, param2_ IN NUMBER) RETURN NUMBER IS
+   result_key_     NUMBER;
+   report_attr_    VARCHAR2(200);
+   parameter_attr_ VARCHAR2(32000);
+BEGIN
+   General_SYS.Init_Method(lu_name_, '<BASE>_RPI', 'Test');
+   Report_SYS.Get_Result_Key__(result_key_);         -- double underscore
+   Client_SYS.Add_To_Attr('RESULT_KEY', result_key_, report_attr_);
+   IF param1_ IS NOT NULL THEN
+      Client_SYS.Add_To_Attr('PARAM1', param1_, parameter_attr_);
+   END IF;
+   IF param2_ IS NOT NULL THEN
+      Client_SYS.Add_To_Attr('PARAM2', param2_, parameter_attr_);
+   END IF;
+   Execute_Report(report_attr_, parameter_attr_);
+   RETURN result_key_;
+END Test;
+
+PROCEDURE Init IS BEGIN NULL; END Init;
+
+END <BASE>_RPI;
+/
+SHOW ERROR"""
 
 _REPORT_SKELETON = """\
 -- ═══ .report STRUCTURAL SKELETON ═══
@@ -302,7 +451,7 @@ def propose_field_list(
 ) -> str:
     """Ask Claude to propose the complete Field List for all blocks."""
     block_summary = _format_block_tree(parsed_rdl.root_block)
-    codebase_context = _format_chunks(chunks[:5])  # cap at 5 chunks to stay under rate limit
+    codebase_context = _format_chunks(chunks[:8])  # cap chunks to stay under rate limit
     guide = _format_structural_guide()
 
     prompt = f"""I need to generate an IFS Report Definition Package for this report.
@@ -351,7 +500,7 @@ def generate_files(
     Generate the .rdf and .report files from the confirmed Field List.
     Returns dict of filename -> written Path.
     """
-    codebase_context = _format_chunks(chunks[:5])  # cap at 5 chunks to stay under rate limit
+    codebase_context = _format_chunks(chunks[:8])  # cap chunks to stay under rate limit
     guide = _format_structural_guide()
     rdf_name = f"{meta.report_name}.rdf"
     report_name = f"{meta.report_name}.report"

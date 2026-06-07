@@ -13,7 +13,7 @@ def query(
     field_names: list[str],
     description: str,
     index_dir: Path,
-    n: int = 5,
+    n: int = 8,
 ) -> list[dict]:
     """
     Embed a combined query of field names + description and return top-n chunks.
