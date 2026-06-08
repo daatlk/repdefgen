@@ -128,25 +128,41 @@ def build_index(build_home: Path, index_dir: Path) -> tuple[int, int]:
     if not all_chunks:
         return 0, 0
 
-    # Batch upsert
+    # Batch upsert — re-fetch collection on stale-reference errors
     batch_size = 500
+    chunk_count = 0
     for i in range(0, len(all_chunks), batch_size):
         batch = all_chunks[i : i + batch_size]
         texts = [c["text"] for c in batch]
         embeddings = model.encode(texts, show_progress_bar=False).tolist()
-        collection.upsert(
-            ids=[f"chunk_{i + j}" for j in range(len(batch))],
-            embeddings=embeddings,
-            documents=texts,
-            metadatas=[
-                {
-                    "file_path": c["file_path"],
-                    "file_type": c["file_type"],
-                    "chunk_type": c["chunk_type"],
-                    "object_name": c["object_name"],
-                }
-                for c in batch
-            ],
-        )
+        ids = [f"chunk_{i + j}" for j in range(len(batch))]
+        metadatas = [
+            {
+                "file_path": c["file_path"],
+                "file_type": c["file_type"],
+                "chunk_type": c["chunk_type"],
+                "object_name": c["object_name"],
+            }
+            for c in batch
+        ]
+        for attempt in range(3):
+            try:
+                collection.upsert(
+                    ids=ids,
+                    embeddings=embeddings,
+                    documents=texts,
+                    metadatas=metadatas,
+                )
+                break
+            except Exception as exc:
+                if attempt < 2:
+                    # Re-fetch the collection reference and retry
+                    try:
+                        collection = client.get_collection(COLLECTION_NAME)
+                    except Exception:
+                        pass
+                else:
+                    print(f"  [warn] skipping batch at offset {i} after 3 attempts: {exc}")
+        chunk_count += len(batch)
 
-    return file_count, len(all_chunks)
+    return file_count, chunk_count
