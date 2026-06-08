@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import './index.css';
+import LoginStep from './components/LoginStep';
 import UploadStep from './components/UploadStep';
 import ReviewStep from './components/ReviewStep';
 import PreviewStep from './components/PreviewStep';
+import { getToken } from './api';
 import type { SessionCreatedResponse } from './api';
 
-type Step = 'upload' | 'review' | 'preview';
+type Step = 'login' | 'upload' | 'review' | 'preview';
 
 export default function App() {
-  const [step, setStep] = useState<Step>('upload');
+  const [step, setStep] = useState<Step>(() => getToken() ? 'upload' : 'login');
   const [sessionId, setSessionId] = useState('');
   const [parsed, setParsed] = useState<SessionCreatedResponse | null>(null);
   const [initialMessage, setInitialMessage] = useState('');
@@ -36,6 +38,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
+      {step === 'login' && (
+        <LoginStep onLogin={() => setStep('upload')} />
+      )}
       {step === 'upload' && (
         <UploadStep onDone={handleUploaded} />
       )}

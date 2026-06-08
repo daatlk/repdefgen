@@ -13,19 +13,40 @@ The compiled React build is served as static files at /.
 """
 
 import os
+import secrets
 import tempfile
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 INDEX_DIR = Path(".repdefgen/index")
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
+
+_valid_tokens: set[str] = set()
+_bearer = HTTPBearer(auto_error=False)
+
+
+def require_auth(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(_bearer),
+) -> str:
+    if not credentials or credentials.credentials not in _valid_tokens:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return credentials.credentials
 
 # ---------------------------------------------------------------------------
 # Session state
@@ -103,12 +124,33 @@ class FilesResponse(BaseModel):
     files: dict[str, str]  # filename -> content
 
 
+class LoginRequest(BaseModel):
+    password: str
+
+
+class TokenResponse(BaseModel):
+    token: str
+
+
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
 
+@app.post("/api/auth/login", response_model=TokenResponse)
+async def login(req: LoginRequest):
+    """Exchange the APP_PASSWORD for a bearer token."""
+    app_password = os.environ.get("APP_PASSWORD", "")
+    if not app_password:
+        raise HTTPException(status_code=500, detail="APP_PASSWORD environment variable is not set")
+    if req.password != app_password:
+        raise HTTPException(status_code=401, detail="Invalid password")
+    token = secrets.token_hex(32)
+    _valid_tokens.add(token)
+    return TokenResponse(token=token)
+
+
 @app.post("/api/sessions", response_model=SessionCreatedResponse)
-async def create_session(rdl_file: UploadFile = File(...)):
+async def create_session(rdl_file: UploadFile = File(...), _: str = Depends(require_auth)):
     """Upload an .rdl file, parse it, and run RAG retrieval."""
     if not rdl_file.filename or not rdl_file.filename.endswith(".rdl"):
         raise HTTPException(status_code=400, detail="Only .rdl files are supported")
@@ -174,7 +216,7 @@ async def create_session(rdl_file: UploadFile = File(...)):
 
 
 @app.post("/api/sessions/{session_id}/field-list", response_model=MessageResponse)
-async def propose_field_list(session_id: str, req: FieldListRequest):
+async def propose_field_list(session_id: str, req: FieldListRequest, _: str = Depends(require_auth)):
     """Create the Claude session and propose an initial field list."""
     state = _get_session(session_id)
 
@@ -202,7 +244,7 @@ async def propose_field_list(session_id: str, req: FieldListRequest):
 
 
 @app.post("/api/sessions/{session_id}/field-list/correct", response_model=MessageResponse)
-async def correct_field_list(session_id: str, req: CorrectionRequest):
+async def correct_field_list(session_id: str, req: CorrectionRequest, _: str = Depends(require_auth)):
     """Apply a natural-language correction to the current field list."""
     state = _get_session(session_id)
     if not state.claude_session:
@@ -221,7 +263,7 @@ async def correct_field_list(session_id: str, req: CorrectionRequest):
 
 
 @app.post("/api/sessions/{session_id}/generate", response_model=FilesResponse)
-async def generate_files(session_id: str):
+async def generate_files(session_id: str, _: str = Depends(require_auth)):
     """Generate the .rdf and .report files from the current field list."""
     state = _get_session(session_id)
     if not state.claude_session or not state.meta:
@@ -256,7 +298,7 @@ async def generate_files(session_id: str):
 
 
 @app.post("/api/sessions/{session_id}/correct", response_model=FilesResponse)
-async def apply_correction(session_id: str, req: CorrectionRequest):
+async def apply_correction(session_id: str, req: CorrectionRequest, _: str = Depends(require_auth)):
     """Apply a SQL correction to the generated .rdf file."""
     state = _get_session(session_id)
     if not state.written_files:
@@ -276,7 +318,7 @@ async def apply_correction(session_id: str, req: CorrectionRequest):
 
 
 @app.get("/api/sessions/{session_id}/download/{filename}")
-async def download_file(session_id: str, filename: str):
+async def download_file(session_id: str, filename: str, _: str = Depends(require_auth)):
     """Stream a generated file as a download."""
     state = _get_session(session_id)
     # Sanitise: only allow filenames present in written_files
@@ -291,7 +333,7 @@ async def download_file(session_id: str, filename: str):
 
 
 @app.delete("/api/sessions/{session_id}", status_code=204)
-async def delete_session(session_id: str):
+async def delete_session(session_id: str, _: str = Depends(require_auth)):
     """Remove session state and clean up temp files."""
     import shutil
     state = _sessions.pop(session_id, None)

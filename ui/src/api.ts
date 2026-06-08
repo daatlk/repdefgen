@@ -1,5 +1,33 @@
 // Typed API wrappers for the RepDefGen FastAPI backend
 
+const TOKEN_KEY = 'repdefgen_token';
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export async function login(password: string): Promise<void> {
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error((body as { detail?: string }).detail ?? 'Invalid password');
+  }
+  const data = await res.json() as { token: string };
+  setToken(data.token);
+}
+
 export interface BlockSummary {
   name: string;
   field_count: number;
@@ -23,12 +51,23 @@ export interface FilesResponse {
 }
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, init);
+  const token = getToken();
+  const existingHeaders = init?.headers instanceof Headers
+    ? Object.fromEntries(init.headers.entries())
+    : (init?.headers as Record<string, string> | undefined) ?? {};
+  const headers: Record<string, string> = { ...existingHeaders };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(url, { ...init, headers });
+  if (res.status === 401) {
+    clearToken();
+    window.location.reload();
+    throw new Error('Session expired — please log in again');
+  }
   if (!res.ok) {
     let detail = res.statusText;
     try {
       const body = await res.json();
-      detail = body.detail ?? detail;
+      detail = (body as { detail?: string }).detail ?? detail;
     } catch {}
     throw new Error(detail);
   }
