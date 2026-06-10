@@ -120,9 +120,9 @@ export default function ReviewStep({ sessionId, parsed, initialMessage, initialF
       </header>
 
       {/* Split view */}
-      <div className="flex-1 grid grid-cols-5 min-h-0">
+      <div className="flex-1 grid grid-cols-5 grid-rows-[minmax(0,1fr)] min-h-0">
         {/* Field list — main work surface */}
-        <div className="col-span-3 border-r border-slate-800 min-h-0">
+        <div className="col-span-3 border-r border-slate-800 min-h-0 overflow-y-auto">
           <FieldListPanel
             fieldList={fieldList}
             changedKeys={changedKeys}

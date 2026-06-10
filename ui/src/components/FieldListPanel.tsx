@@ -9,7 +9,7 @@ interface Props {
 
 export default function FieldListPanel({ fieldList, changedKeys, onChange }: Props) {
   return (
-    <div className="flex flex-col gap-3 p-4 overflow-y-auto h-full">
+    <div className="flex flex-col gap-3 p-4">
       {fieldList.blocks.map(block => (
         <BlockCard
           key={block.name}
