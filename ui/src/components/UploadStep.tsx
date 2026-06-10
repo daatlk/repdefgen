@@ -1,10 +1,15 @@
 import { useCallback, useState } from 'react';
 import { useDropzone, type FileRejection } from 'react-dropzone';
 import kaizensLogo from '../assets/kaizens-logo.webp';
-import { createSession, proposeFieldList, type SessionCreatedResponse } from '../api';
+import { createSession, proposeFieldList, type FieldListData, type SessionCreatedResponse } from '../api';
 
 interface Props {
-  onDone: (sessionId: string, parsed: SessionCreatedResponse, firstMessage: string) => void;
+  onDone: (
+    sessionId: string,
+    parsed: SessionCreatedResponse,
+    firstMessage: string,
+    fieldList: FieldListData,
+  ) => void;
 }
 
 export default function UploadStep({ onDone }: Props) {
@@ -39,7 +44,7 @@ export default function UploadStep({ onDone }: Props) {
     try {
       const session = await createSession(file!);
       const proposal = await proposeFieldList(session.session_id, luName, module, description);
-      onDone(session.session_id, session, proposal.message);
+      onDone(session.session_id, session, proposal.message, proposal.field_list);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {

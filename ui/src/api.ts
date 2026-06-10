@@ -46,6 +46,36 @@ export interface MessageResponse {
   message: string;
 }
 
+export interface FieldDef {
+  name: string;
+  data_type: string;
+  hidden: boolean;
+  source?: string | null;
+  note?: string | null;
+}
+
+export interface BlockDef {
+  name: string;
+  parent: string | null;
+  aggregate: string | null;
+  fields: FieldDef[];
+}
+
+export interface ParameterDef {
+  name: string;
+  data_type: string;
+}
+
+export interface FieldListData {
+  blocks: BlockDef[];
+  parameters: ParameterDef[];
+}
+
+export interface FieldListResponse {
+  message: string;
+  field_list: FieldListData;
+}
+
 export interface FilesResponse {
   files: Record<string, string>; // filename -> content
 }
@@ -85,8 +115,8 @@ export async function proposeFieldList(
   luName: string,
   module: string,
   description: string,
-): Promise<MessageResponse> {
-  return request<MessageResponse>(`/api/sessions/${sessionId}/field-list`, {
+): Promise<FieldListResponse> {
+  return request<FieldListResponse>(`/api/sessions/${sessionId}/field-list`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ lu_name: luName, module, description }),
@@ -96,16 +126,24 @@ export async function proposeFieldList(
 export async function correctFieldList(
   sessionId: string,
   text: string,
-): Promise<MessageResponse> {
-  return request<MessageResponse>(`/api/sessions/${sessionId}/field-list/correct`, {
+  fieldList: FieldListData,
+): Promise<FieldListResponse> {
+  return request<FieldListResponse>(`/api/sessions/${sessionId}/field-list/correct`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, field_list: fieldList }),
   });
 }
 
-export async function generateFiles(sessionId: string): Promise<FilesResponse> {
-  return request<FilesResponse>(`/api/sessions/${sessionId}/generate`, { method: 'POST' });
+export async function generateFiles(
+  sessionId: string,
+  fieldList: FieldListData,
+): Promise<FilesResponse> {
+  return request<FilesResponse>(`/api/sessions/${sessionId}/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ field_list: fieldList }),
+  });
 }
 
 export async function applyCorrection(

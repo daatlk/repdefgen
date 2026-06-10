@@ -1,8 +1,9 @@
 """Prompt construction, Field List proposal, .rdf/.report generation and file writing."""
 
+import json
 import re
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Union
 
 from repdefgen.rdl_parser import ParsedRDL
 from repdefgen.session import Session
@@ -62,6 +63,89 @@ class Meta(NamedTuple):
     module: str
     title: str
     report_name: str
+
+
+# ---------------------------------------------------------------------------
+# Structured Field List tool schema — forced tool call guarantees valid JSON
+# ---------------------------------------------------------------------------
+
+FIELD_LIST_TOOL = {
+    "name": "submit_field_list",
+    "description": "Submit the complete proposed Field List for the report.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "message": {
+                "type": "string",
+                "description": (
+                    "Short chat summary of what was proposed or changed "
+                    "(2-3 sentences, mention any hidden fields added and why)."
+                ),
+            },
+            "blocks": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string", "description": "Block name, e.g. QUOTATION_HEADER"},
+                        "parent": {"type": ["string", "null"], "description": "Parent block name, null for root"},
+                        "aggregate": {"type": ["string", "null"], "description": "Aggregate edge name, e.g. HEADERS1"},
+                        "fields": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string", "description": "SCREAMING_SNAKE_CASE field name"},
+                                    "data_type": {"type": "string", "description": "SQL type, e.g. VARCHAR2(20), NUMBER, DATE"},
+                                    "hidden": {"type": "boolean", "description": "True if not in the layout (inferred linking/join field)"},
+                                    "source": {"type": ["string", "null"], "description": "view_or_table.column this maps to, if known from codebase context"},
+                                    "note": {"type": ["string", "null"], "description": "One-line reason, only for hidden/inferred fields"},
+                                },
+                                "required": ["name", "data_type", "hidden"],
+                            },
+                        },
+                    },
+                    "required": ["name", "parent", "aggregate", "fields"],
+                },
+            },
+            "parameters": {
+                "type": "array",
+                "description": "Top-level report parameters (filter inputs bound in Execute_Report)",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "data_type": {"type": "string"},
+                    },
+                    "required": ["name", "data_type"],
+                },
+            },
+        },
+        "required": ["message", "blocks", "parameters"],
+    },
+}
+
+
+def format_field_list_text(field_list: dict) -> str:
+    """Render a structured field list as readable text for generation prompts."""
+    lines = []
+    for block in field_list.get("blocks", []):
+        parent = f" (child of {block['parent']}, aggregate {block.get('aggregate')})" if block.get("parent") else ""
+        lines.append(f"BLOCK {block['name']}{parent}:")
+        for f in block.get("fields", []):
+            marker = ""
+            if f.get("hidden"):
+                reason = f.get("note") or "inferred"
+                marker = f"  [HIDDEN — {reason}]"
+            src = f"  (source: {f['source']})" if f.get("source") else ""
+            lines.append(f"  {f['name']}  {f['data_type']}{marker}{src}")
+        lines.append("")
+    params = field_list.get("parameters", [])
+    if params:
+        lines.append("REPORT PARAMETERS:")
+        for p in params:
+            lines.append(f"  {p['name']}  {p['data_type']}")
+    return "\n".join(lines)
 
 
 def _load_sample_text(path: Path) -> str:
@@ -488,8 +572,78 @@ Format as a structured list per block. Be explicit about what you see in the lay
     return session.send(prompt, max_tokens=4096)
 
 
+def propose_field_list_structured(
+    parsed_rdl: ParsedRDL,
+    chunks: list[dict],
+    session: Session,
+) -> dict:
+    """Like propose_field_list, but returns structured JSON via a forced tool call.
+
+    Returns {"message": str, "blocks": [...], "parameters": [...]}.
+    """
+    block_summary = _format_block_tree(parsed_rdl.root_block)
+    codebase_context = _format_chunks(chunks[:8])
+    guide = _format_structural_guide()
+
+    prompt = f"""I need to generate an IFS Report Definition Package for this report.
+
+REPORT: {parsed_rdl.report_name}
+TITLE: {parsed_rdl.report_title}
+
+BLOCK STRUCTURE AND VISIBLE FIELDS (from the layout):
+{block_summary}
+
+RELEVANT CODEBASE CONTEXT (views and APIs from the IFS Build Home):
+{codebase_context}
+
+STRUCTURAL PATTERNS TO FOLLOW:
+{guide}
+
+Propose the complete Field List for this report via the submit_field_list tool.
+
+For EACH BLOCK include:
+1. All visible fields from the layout with inferred SQL data types and lengths
+2. Hidden/linking fields likely needed — primary keys, foreign keys used in JOINs, and especially
+   any fields that must be fetched in a PARENT block and passed as parameters to a CHILD block cursor
+   (e.g. a revision number not shown in the layout but required for the detail cursor WHERE clause).
+   Set hidden=true with a one-line note explaining why.
+3. Where the codebase context shows a matching view column, set source to view_name.column_name.
+
+Also include the top-level Report Parameters (the filter inputs bound in Execute_Report)."""
+
+    return session.send_structured(
+        prompt, FIELD_LIST_TOOL["name"], FIELD_LIST_TOOL, max_tokens=8192
+    )
+
+
+def correct_field_list_structured(
+    correction: str,
+    current_field_list: dict,
+    session: Session,
+) -> dict:
+    """Apply a natural-language correction to the field list; returns updated JSON.
+
+    current_field_list is the client's latest state (including any manual edits),
+    injected so Claude works from the client's source of truth, not its own stale copy.
+    """
+    current_json = json.dumps(
+        {k: v for k, v in current_field_list.items() if k != "message"}, indent=2
+    )
+    prompt = f"""The current field list (including any manual edits the user made directly) is:
+
+{current_json}
+
+Apply this correction and resubmit the COMPLETE updated field list via submit_field_list:
+
+{correction}"""
+
+    return session.send_structured(
+        prompt, FIELD_LIST_TOOL["name"], FIELD_LIST_TOOL, max_tokens=8192
+    )
+
+
 def generate_files(
-    field_list: str,
+    field_list: Union[str, dict],
     parsed_rdl: ParsedRDL,
     meta: Meta,
     chunks: list[dict],
@@ -498,8 +652,11 @@ def generate_files(
 ) -> dict[str, Path]:
     """
     Generate the .rdf and .report files from the confirmed Field List.
+    field_list may be prose (CLI flow) or a structured dict (web UI flow).
     Returns dict of filename -> written Path.
     """
+    if isinstance(field_list, dict):
+        field_list = format_field_list_text(field_list)
     codebase_context = _format_chunks(chunks[:8])  # cap chunks to stay under rate limit
     guide = _format_structural_guide()
     rdf_name = f"{meta.report_name}.rdf"

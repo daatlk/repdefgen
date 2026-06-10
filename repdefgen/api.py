@@ -116,8 +116,22 @@ class MessageResponse(BaseModel):
     message: str
 
 
+class FieldListResponse(BaseModel):
+    message: str
+    field_list: dict  # {blocks: [...], parameters: [...]}
+
+
 class CorrectionRequest(BaseModel):
     text: str
+
+
+class FieldListCorrectionRequest(BaseModel):
+    text: str
+    field_list: dict  # client's current state, including manual edits
+
+
+class GenerateRequest(BaseModel):
+    field_list: Optional[dict] = None  # client's confirmed state; None = legacy flow
 
 
 class FilesResponse(BaseModel):
@@ -220,12 +234,12 @@ async def create_session(rdl_file: UploadFile = File(...), _: str = Depends(requ
     )
 
 
-@app.post("/api/sessions/{session_id}/field-list", response_model=MessageResponse)
+@app.post("/api/sessions/{session_id}/field-list", response_model=FieldListResponse)
 async def propose_field_list(session_id: str, req: FieldListRequest, _: str = Depends(require_auth)):
-    """Create the Claude session and propose an initial field list."""
+    """Create the Claude session and propose an initial structured field list."""
     state = _get_session(session_id)
 
-    from repdefgen.generator import Meta, propose_field_list as _propose, SYSTEM_PROMPT
+    from repdefgen.generator import Meta, propose_field_list_structured, SYSTEM_PROMPT
     from repdefgen.session import Session
 
     meta = Meta(
@@ -239,37 +253,37 @@ async def propose_field_list(session_id: str, req: FieldListRequest, _: str = De
     try:
         claude_session = Session(system_prompt=SYSTEM_PROMPT)
         state.claude_session = claude_session
-        proposal = _propose(state.parsed_rdl, state.chunks, claude_session)
+        result = propose_field_list_structured(state.parsed_rdl, state.chunks, claude_session)
     except EnvironmentError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Claude error: {exc}")
 
-    return MessageResponse(message=proposal)
+    message = result.pop("message", "Field list proposed.")
+    return FieldListResponse(message=message, field_list=result)
 
 
-@app.post("/api/sessions/{session_id}/field-list/correct", response_model=MessageResponse)
-async def correct_field_list(session_id: str, req: CorrectionRequest, _: str = Depends(require_auth)):
-    """Apply a natural-language correction to the current field list."""
+@app.post("/api/sessions/{session_id}/field-list/correct", response_model=FieldListResponse)
+async def correct_field_list(session_id: str, req: FieldListCorrectionRequest, _: str = Depends(require_auth)):
+    """Apply a natural-language correction to the client's current field list."""
     state = _get_session(session_id)
     if not state.claude_session:
         raise HTTPException(status_code=400, detail="Field list not yet proposed")
 
+    from repdefgen.generator import correct_field_list_structured
+
     try:
-        reply = state.claude_session.send(
-            f"Update the field list based on this correction: {req.text}\n\n"
-            "Show the complete updated Field List.",
-            max_tokens=4096,
-        )
+        result = correct_field_list_structured(req.text, req.field_list, state.claude_session)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Claude error: {exc}")
 
-    return MessageResponse(message=reply)
+    message = result.pop("message", "Field list updated.")
+    return FieldListResponse(message=message, field_list=result)
 
 
 @app.post("/api/sessions/{session_id}/generate", response_model=FilesResponse)
-async def generate_files(session_id: str, _: str = Depends(require_auth)):
-    """Generate the .rdf and .report files from the current field list."""
+async def generate_files(session_id: str, req: GenerateRequest = None, _: str = Depends(require_auth)):
+    """Generate the .rdf and .report files from the confirmed field list."""
     state = _get_session(session_id)
     if not state.claude_session or not state.meta:
         raise HTTPException(status_code=400, detail="Field list not yet proposed")
@@ -277,12 +291,16 @@ async def generate_files(session_id: str, _: str = Depends(require_auth)):
     from repdefgen.generator import generate_files as _generate
 
     output_dir = Path(state.temp_dir)
-    # The last assistant message in the session is the confirmed field list
-    history = state.claude_session.history
-    field_list = next(
-        (m["content"] for m in reversed(history) if m["role"] == "assistant"),
-        "",
-    )
+    if req and req.field_list:
+        # Client's structured state (includes manual edits) is the source of truth
+        field_list = req.field_list
+    else:
+        # Legacy fallback: last assistant message in session history
+        history = state.claude_session.history
+        field_list = next(
+            (m["content"] for m in reversed(history) if m["role"] == "assistant"),
+            "",
+        )
 
     try:
         written = _generate(
