@@ -17,7 +17,7 @@ export default function UploadStep({ onDone }: Props) {
 
   const onDrop = useCallback((accepted: File[], rejected: FileRejection[]) => {
     if (rejected.length > 0) {
-      setError('Only .rdl files are supported.');
+      setError('Only .rdl and .rep files are supported.');
       return;
     }
     setFile(accepted[0]);
@@ -26,7 +26,7 @@ export default function UploadStep({ onDone }: Props) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'application/octet-stream': ['.rdl'] },
+    accept: { 'application/octet-stream': ['.rdl', '.rep'] },
     maxFiles: 1,
   });
 
@@ -76,7 +76,7 @@ export default function UploadStep({ onDone }: Props) {
             <div className="flex flex-col items-center gap-2">
               <span className="text-3xl">📂</span>
               <p className="text-slate-300 font-medium">
-                {isDragActive ? 'Drop it here…' : 'Drag & drop your .rdl file here'}
+                {isDragActive ? 'Drop it here…' : 'Drag & drop your .rdl or .rep file here'}
               </p>
               <p className="text-sm text-slate-500">or click to browse</p>
             </div>

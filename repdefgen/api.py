@@ -152,8 +152,9 @@ async def login(req: LoginRequest):
 @app.post("/api/sessions", response_model=SessionCreatedResponse)
 async def create_session(rdl_file: UploadFile = File(...), _: str = Depends(require_auth)):
     """Upload an .rdl file, parse it, and run RAG retrieval."""
-    if not rdl_file.filename or not rdl_file.filename.endswith(".rdl"):
-        raise HTTPException(status_code=400, detail="Only .rdl files are supported")
+    suffix = Path(rdl_file.filename).suffix.lower() if rdl_file.filename else ""
+    if suffix not in (".rdl", ".rep"):
+        raise HTTPException(status_code=400, detail="Only .rdl and .rep files are supported")
 
     # Check index exists
     if not INDEX_DIR.exists():
@@ -173,12 +174,16 @@ async def create_session(rdl_file: UploadFile = File(...), _: str = Depends(requ
     rdl_path = Path(temp_dir) / rdl_file.filename
     rdl_path.write_bytes(rdl_bytes)
 
-    # Parse RDL
-    from repdefgen import rdl_parser, retriever
+    # Parse layout file (.rdl or .rep)
+    from repdefgen import retriever
+    if suffix == ".rep":
+        from repdefgen import rep_parser as layout_parser
+    else:
+        from repdefgen import rdl_parser as layout_parser
     try:
-        parsed = rdl_parser.parse(rdl_path)
+        parsed = layout_parser.parse(rdl_path)
     except Exception as exc:
-        raise HTTPException(status_code=422, detail=f"Failed to parse .rdl: {exc}")
+        raise HTTPException(status_code=422, detail=f"Failed to parse layout file: {exc}")
 
     # RAG retrieval
     all_fields = [f for b in parsed.all_blocks.values() for f in b.fields]

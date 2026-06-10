@@ -44,7 +44,7 @@ def index(build_home: Path):
 # ---------------------------------------------------------------------------
 
 @main.command()
-@click.argument("rdl_file", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.argument("layout_file", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.option(
     "--output-dir", "-o",
     type=click.Path(file_okay=False, path_type=Path),
@@ -52,9 +52,9 @@ def index(build_home: Path):
     show_default=True,
     help="Directory to write generated files into.",
 )
-def generate(rdl_file: Path, output_dir: Path):
-    """Generate .rdf and .report from RDL_FILE using the Codebase Index."""
-    from repdefgen import rdl_parser, retriever
+def generate(layout_file: Path, output_dir: Path):
+    """Generate .rdf and .report from LAYOUT_FILE (.rdl or .rep) using the Codebase Index."""
+    from repdefgen import retriever
     from repdefgen.generator import Meta, apply_correction, generate_files, propose_field_list, SYSTEM_PROMPT
     from repdefgen.session import Session
 
@@ -67,9 +67,18 @@ def generate(rdl_file: Path, output_dir: Path):
         )
         sys.exit(1)
 
-    # --- Parse .rdl ---
-    click.echo(f"Parsing {rdl_file} ...")
-    parsed = rdl_parser.parse(rdl_file)
+    # --- Parse layout file (.rdl or .rep) ---
+    suffix = layout_file.suffix.lower()
+    if suffix == ".rep":
+        from repdefgen import rep_parser as layout_parser
+    elif suffix == ".rdl":
+        from repdefgen import rdl_parser as layout_parser
+    else:
+        click.echo(f"Error: unsupported file type '{suffix}'. Expected .rdl or .rep.", err=True)
+        sys.exit(1)
+
+    click.echo(f"Parsing {layout_file} ...")
+    parsed = layout_parser.parse(layout_file)
     click.echo(f"  Report: {parsed.report_name}")
     click.echo(f"  Title:  {parsed.report_title}")
     for bname, binfo in parsed.all_blocks.items():
